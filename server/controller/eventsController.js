@@ -34,10 +34,15 @@ module.exports = {
       res.status(401).json(next);
     }
   },
-  async create(req, res, next) {
+ async create(req, res, next) {
     try {
-      var Event = await EventService.create(req.body);
-      res.send({ msg: "inserted" });
+      var exits = await EventService.checkIf(req.body.userId, req.body.start);
+      if (exits[0].start) {
+        res.send({ alert: "event with this worker and time already exist" });
+      } else {
+        var Event = await EventService.create(req.body);
+        res.send({ msg: "inserted" });
+      }
     } catch (next) {
       console.log(next);
       res.status(401).json(next);
