@@ -16,4 +16,7 @@ module.exports = new (class EventService {
   update(_id, data) {
     return Event.findOneAndUpdate({ _id }, data);
   }
+   checkIf(userId, start) {
+    return Event.find({ start, userId });
+  }
 })();
