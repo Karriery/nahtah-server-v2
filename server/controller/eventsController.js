@@ -36,12 +36,26 @@ module.exports = {
   },
  async create(req, res, next) {
     try {
-      var exits = await EventService.checkIf(req.body.userId, req.body.start);
-      if (exits[0].start) {
-        res.send({ alert: "event with this worker and time already exist" });
+      var exits = await EventService.checkIf(req.body.userId);
+      if (exits[0]) {
+        for (var i = 0; i < exits.length; i++) {
+          if (
+            req.body.start.valueOf() >= exits[0].start.valueOf() &&
+            req.body.start.valueOf() <= exits[0].end.valueOf()
+          ) {
+            res.send({
+              alert: "event with this worker and time already exist",
+            });
+            return;
+          }
+        }
+        var Event = await EventService.create(req.body);
+        res.send({ msg: "inserted" });
+        return;
       } else {
         var Event = await EventService.create(req.body);
         res.send({ msg: "inserted" });
+        return;
       }
     } catch (next) {
       console.log(next);
