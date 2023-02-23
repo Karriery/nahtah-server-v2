@@ -16,7 +16,11 @@ module.exports = new (class EventService {
   update(_id, data) {
     return Event.findOneAndUpdate({ _id }, data);
   }
-   checkIf(userId) {
+  checkIf(userId) {
     return Event.find({ userId });
+  }
+  getbyToday(today) {
+    const regex = new RegExp(today.slice(0, 10), "i"); // i for case insensitive
+    return Event.find({ start: { $regex: regex } });
   }
 })();
