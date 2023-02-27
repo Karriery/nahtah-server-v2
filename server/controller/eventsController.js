@@ -40,7 +40,7 @@ module.exports = {
       for (var i = 0; i < sameDayEvents.length; i++) {
         if (
           req.body.start.valueOf() >= sameDayEvents[i].start.valueOf() &&
-          req.body.start.valueOf() <= sameDayEvents[i].end.valueOf() &&
+          req.body.start.valueOf() < sameDayEvents[i].end.valueOf() &&
           req.body.userId === sameDayEvents[i].userId
         ) {
           res.send({
