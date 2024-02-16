@@ -60,7 +60,7 @@ module.exports = {
           if (result) {
             var token = jwt.sign({ id: User._id }, "sa7fa leblebi");
             var access_token = jwt.sign({ id: User._id }, "halelews");
-            res.send({ token, access_token });
+            res.send({ token, access_token , user : User });
           } else {
             res.send({ msg: "wrong password" });
           }
