@@ -19,6 +19,9 @@ module.exports = new (class EventService {
   checkIf(userId) {
     return Event.find({ userId });
   }
+  findbyClient(client) {
+    return Event.find({ client });
+  }
   getbyToday(today) {
     const regex = new RegExp(today.slice(0, 10), "i"); // i for case insensitive
     return Event.find({ start: { $regex: regex } });
