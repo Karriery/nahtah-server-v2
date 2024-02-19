@@ -1,6 +1,6 @@
 const EventService = require("../service/eventsService.js");
 const NotificationService = require("../service/notificationService.js");
-const schedule = require('node-schedule');
+const schedule = require("node-schedule");
 const { initializeApp } = require("firebase/app");
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -13,7 +13,7 @@ const firebaseConfig = {
   projectId: "myproject-ee9bd",
   storageBucket: "myproject-ee9bd.appspot.com",
   messagingSenderId: "66258228658",
-  appId: "1:66258228658:web:bf8e2339e25f5c238f80ab"
+  appId: "1:66258228658:web:bf8e2339e25f5c238f80ab",
 };
 
 // Initialize Firebase
@@ -76,7 +76,7 @@ module.exports = {
         }
       }
 
-      console.log(req.body)
+      console.log(req.body);
       var Event = await EventService.create(req.body);
       res.send({ msg: "inserted" });
       return;
@@ -86,11 +86,13 @@ module.exports = {
     }
   },
 
-  chrone(date , minutesBeforeDate , callback){
+  chrone(date, minutesBeforeDate, callback) {
     const targetDateTime = new Date(date);
-    const fifteenMinutesBefore = new Date(targetDateTime.getTime() - minutesBeforeDate * 60000);
+    const fifteenMinutesBefore = new Date(
+      targetDateTime.getTime() - minutesBeforeDate * 60000
+    );
     const job = schedule.scheduleJob(fifteenMinutesBefore, callback);
-    console.log('Job scheduled to run at:', fifteenMinutesBefore);
+    console.log("Job scheduled to run at:", fifteenMinutesBefore);
   },
 
   async createWithUser(req, res, next) {
@@ -108,8 +110,6 @@ module.exports = {
           return;
         }
       }
-      
-     
 
       var Event = await EventService.create(req.body);
       res.send({ msg: "inserted" });
@@ -120,17 +120,26 @@ module.exports = {
     }
   },
 
-  sendNotification(title , text , eventId , client){
-     
-  },
+  sendNotification(title, text, eventId, client) {},
 
-
-  async updated(req, res, next) {
+  async accept(req, res, next) {
     try {
       var Event = await EventService.update(req.params.id, req.body);
-      this.chrone(req.body.start , 15 , "function notification tell the user u have 15 min")
-      this.chrone(req.body.start , 60 , "function notification tell the user u have one hour")
-      this.chrone(req.body.start , -30 , "function notification tell the user you can give feedback now")
+      this.chrone(
+        req.body.start,
+        15,
+        "function notification tell the user u have 15 min"
+      );
+      this.chrone(
+        req.body.start,
+        60,
+        "function notification tell the user u have one hour"
+      );
+      this.chrone(
+        req.body.start,
+        -30,
+        "function notification tell the user you can give feedback now"
+      );
 
       res.send({ msg: "updated" });
     } catch (next) {
