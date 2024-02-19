@@ -1,4 +1,5 @@
 const EventService = require("../service/eventsService.js");
+const NotificationService = require("../service/notificationService.js");
 const schedule = require('node-schedule');
 const { initializeApp } = require("firebase/app");
 // TODO: Add SDKs for Firebase products that you want to use
@@ -109,14 +110,30 @@ module.exports = {
       }
       
      
-      this.chrone(req.body.start , 15 , "function notification tell the user u have 15 min")
-      this.chrone(req.body.start , 60 , "function notification tell the user u have one hour")
-      this.chrone(req.body.start , -30 , "function notification tell the user you can give feedback now")
+
       var Event = await EventService.create(req.body);
       res.send({ msg: "inserted" });
       return;
     } catch (next) {
       console.log(next);
+      res.status(401).json(next);
+    }
+  },
+
+  sendNotification(title , text , eventId , client){
+     
+  },
+
+
+  async updated(req, res, next) {
+    try {
+      var Event = await EventService.update(req.params.id, req.body);
+      this.chrone(req.body.start , 15 , "function notification tell the user u have 15 min")
+      this.chrone(req.body.start , 60 , "function notification tell the user u have one hour")
+      this.chrone(req.body.start , -30 , "function notification tell the user you can give feedback now")
+
+      res.send({ msg: "updated" });
+    } catch (next) {
       res.status(401).json(next);
     }
   },
