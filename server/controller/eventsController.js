@@ -38,12 +38,16 @@ module.exports = {
   async getEventByClient(req, res, next) {
     try {
       var Event = await EventService.getById(req.params.id);
-      res.send(Event);
-    } catch (next) {
-      res.status(401).json(next);
+      if (Event) {
+        return res.send(Event); // Return the response here
+      } else {
+        return res.status(404).send("Event not found");
+      }
+    } catch (error) {
+      console.error("Error fetching event:", error);
+      return res.status(500).send("Internal Server Error");
     }
   },
-
   async deleteByParams(req, res, next) {
     try {
       var Event = await EventService.delete(req.params.id);
