@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema(
   {
     username: String,
     email: { type: String, default: "User@example.com" },
+    phone: { type: String, default: "" },
     image: {
       type: String,
       default:
@@ -15,7 +16,7 @@ const UserSchema = new mongoose.Schema(
     password: String,
     points: Number,
     banned: { type: Boolean, default: false },
-    pushToken : String,
+    pushToken: String,
     type: { type: String, default: "User" },
   },
   {
