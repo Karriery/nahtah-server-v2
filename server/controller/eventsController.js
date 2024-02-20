@@ -64,6 +64,15 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+  async getEventByStatus(req, res, next) {
+    try {
+      var Event = await EventService.getByStatus(req.body.status);
+      res.send(Event);
+    } catch (next) {
+      res.status(401).json(next);
+    }
+  },
+
   async create(req, res, next) {
     try {
       var sameDayEvents = await EventService.getbyToday(req.body.start);

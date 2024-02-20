@@ -10,6 +10,12 @@ module.exports = new (class EventService {
   getById(_id) {
     return Event.findOne({ _id });
   }
+  getByStatus(status) {
+    return Event.find({
+      status: status,
+    });
+  }
+
   delete(_id) {
     return Event.findOneAndDelete({ _id });
   }

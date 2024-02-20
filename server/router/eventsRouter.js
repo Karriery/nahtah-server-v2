@@ -7,6 +7,7 @@ router.get("/", eventController.getEvent);
 router.get("/id/:id", eventController.getEventById);
 router.get("/client/:id", eventController.getEventByClient);
 router.put("/:id", eventController.updated);
+router.post("/status/", eventController.getEventByStatus);
 router.delete("/:id", eventController.deleteByParams);
 router.post("/send-notification", async (req, res) => {
   try {

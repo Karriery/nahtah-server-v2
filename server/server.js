@@ -1,15 +1,30 @@
 const express = require("express");
 const app = express();
+const path = require("path");
+
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const authAdminRout = require("./auth/admin/adminAuthRouter/router.js");
 const authuserRout = require("./auth/user/userAuthRouter/router.js");
 const eventsRout = require("./router/eventsRouter.js");
-const schedule = require('node-schedule');
+const schedule = require("node-schedule");
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    console.log(req.params.id, "req.params.id");
+    cb(null, req.params.id + "." + file.originalname.split(".").pop());
+  },
+});
+
+const upload = multer({ storage });
 
 const PORT = process.env.PORT || 3637;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/img", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use(
   cors({
@@ -17,17 +32,22 @@ app.use(
   })
 );
 
-
-app.get("/halim" , (req , res)=>{
+app.get("/halim", (req, res) => {
   const startTime = new Date(Date.now() + 5000);
   const endTime = new Date(startTime.getTime() + 5000);
-  const job = schedule.scheduleJob({ start: startTime, end: endTime, rule: '*/1 * * * * *' }, function(){
-    console.log('Time for tea!');
-  });
-res.send("hello")
-})
+  const job = schedule.scheduleJob(
+    { start: startTime, end: endTime, rule: "*/1 * * * * *" },
+    function () {
+      console.log("Time for tea!");
+    }
+  );
+  res.send("hello");
+});
 
 app.use("/events", eventsRout);
+app.use("/events/upload/:id", upload.single("img"), (req, res) => {
+  res.send({ message: "image uploaded successfully" });
+});
 
 app.use("/auth/admin", authAdminRout);
 app.use("/auth/user", authuserRout);

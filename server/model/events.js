@@ -9,14 +9,14 @@ const EventSchema = new mongoose.Schema(
     end: String,
     userId: String,
     description: String,
-    client:  {
+    client: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "User",
     },
-    status : { type: Boolean, default: undefined },
-    reason : String,
-    rate : { type: Number, default: undefined },
-    feedback : { type: String, default: undefined },
+    status: { type: Boolean, default: undefined },
+    reason: String,
+    rate: { type: Number, default: undefined },
+    feedback: { type: String, default: undefined },
     type: { type: String, default: "Event" },
   },
   {
