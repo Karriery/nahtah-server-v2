@@ -13,7 +13,7 @@ const EventSchema = new mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: "User",
     },
-    status: { type: Boolean, default: undefined },
+    status: { type: Boolean, default: null },
     reason: String,
     rate: { type: Number, default: undefined },
     feedback: { type: String, default: undefined },
