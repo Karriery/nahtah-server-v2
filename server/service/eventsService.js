@@ -5,7 +5,7 @@ module.exports = new (class EventService {
     return Event.create(data);
   }
   get() {
-    return Event.find().sort({ start: "desc" });
+    return Event.find().sort({ start: "desc" }).populate("client");
   }
   getById(_id) {
     return Event.findOne({ _id });
@@ -20,7 +20,7 @@ module.exports = new (class EventService {
     return Event.find({ userId });
   }
   findbyClient(client) {
-    return Event.find({ client });
+    return Event.find({ client }).populate("client");
   }
   getbyToday(today) {
     const regex = new RegExp(today.slice(0, 10), "i"); // i for case insensitive
