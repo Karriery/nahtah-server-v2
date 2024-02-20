@@ -124,7 +124,29 @@ module.exports = {
     }
   },
 
-  sendNotification(title, text, eventId, client) {},
+  sendNotification(title, text, eventId, client) {
+    try {
+      // new notification object
+      const notificationData = {
+        title: title,
+        text: text,
+        redirection: eventId,
+        client: client, // hné make sure bech t3adi el User object
+        time: new Date().toISOString(),
+      };
+      // save the notification to the database
+      NotificationService.create(notificationData)
+        .then((notification) => {
+          console.log("Notification saved successfully:", notification);
+          // ba3d successful save, success response (3maltha fil eventRouter)
+        })
+        .catch((error) => {
+          console.error("Error saving notification:", error);
+        });
+    } catch (error) {
+      console.error("Error creating and saving notification:", error);
+    }
+  },
 
   async accept(req, res, next) {
     try {
