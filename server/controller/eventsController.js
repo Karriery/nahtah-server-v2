@@ -37,7 +37,7 @@ module.exports = {
   },
   async getEventByClient(req, res, next) {
     try {
-      var Event = await EventService.getById(req.params.id);
+      var Event = await EventService.findbyClient(req.params.id);
       if (Event) {
         return res.send(Event); // Return the response here
       } else {
