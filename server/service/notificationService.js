@@ -26,4 +26,7 @@ module.exports = new (class NotificationService {
     const regex = new RegExp(today.slice(0, 10), "i"); // i for case insensitive
     return Notification.find({ start: { $regex: regex } });
   }
+  async findByUserId(userId) {
+  return Notification.find({ userId });
+}
 })();
