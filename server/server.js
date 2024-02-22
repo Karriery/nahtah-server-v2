@@ -7,6 +7,8 @@ const bodyParser = require("body-parser");
 const authAdminRout = require("./auth/admin/adminAuthRouter/router.js");
 const authuserRout = require("./auth/user/userAuthRouter/router.js");
 const eventsRout = require("./router/eventsRouter.js");
+const notificationRouter = require('./router/notificationsRouter');
+const newsletterRouter = require('./router/newsletterRouter');
 const schedule = require("node-schedule");
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -43,7 +45,8 @@ app.get("/halim", (req, res) => {
   );
   res.send("hello");
 });
-
+app.use('/notifications', notificationRouter);
+app.use('/newsletter', newsletterRouter);
 app.use("/events", eventsRout);
 app.use("/events/upload/:id", upload.single("img"), (req, res) => {
   res.send({ message: "image uploaded successfully" });

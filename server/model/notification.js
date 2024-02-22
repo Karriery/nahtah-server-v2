@@ -8,11 +8,11 @@ const NotificationSchema = new mongoose.Schema(
     text: String,
     redirection: String,
     time: String,
-    client:  {
+    client: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "User",
     },
-    vue : { type: Boolean, default: false },
+    vue: { type: Boolean, default: false },
     type: { type: String, default: "Notification" },
   },
   {

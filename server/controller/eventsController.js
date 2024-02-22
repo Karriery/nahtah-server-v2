@@ -177,23 +177,25 @@ module.exports = {
     }
   },
 
+  
+
   async accept(req, res, next) {
     try {
       var Event = await EventService.update(req.params.id, req.body);
       this.chrone(
         req.body.start,
         15,
-        "function notification tell the user u have 15 min"
+        this.sendNotification('close event', 'the event is about to start after 15 mins', Event._id, req.body.client)
       );
       this.chrone(
         req.body.start,
         60,
-        "function notification tell the user u have one hour"
+        this.sendNotification('close event', 'the event is about to start after one hour', Event._id, req.body.client)
       );
       this.chrone(
         req.body.start,
         -30,
-        "function notification tell the user you can give feedback now"
+        this.sendNotification('ready to feedback', 'you can now give your feedback for your barber', Event._id, req.body.client)
       );
 
       res.send({ msg: "updated" });
