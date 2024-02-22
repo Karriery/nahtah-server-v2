@@ -76,15 +76,18 @@ module.exports = {
   getEventByUser(req, res, next) {
     EventService.getEventByUser(req.body.userId)
       .then((events) => {
-        let modifiedEvents = events.map((event) => {
-          if (!event.feedback && !event.rate) {
-            return {
-              feedback: "Event hasn't been rated",
-              rate: "Event hasn't been rated",
-            };
-          }
-          return event;
-        });
+        let modifiedEvents = events
+          .filter((event) => event.status === true) // Filter events with status true
+          .map((event) => {
+            if (!event.feedback && !event.rate) {
+              return {
+                feedback: "Event hasn't been rated",
+                rate: "-",
+                // Spread the rest of the event properties
+              };
+            }
+            return event;
+          });
         res.send(modifiedEvents);
       })
       .catch((error) => {
@@ -92,7 +95,6 @@ module.exports = {
         res.status(500).send("Internal Server Error");
       });
   },
-
   async create(req, res, next) {
     try {
       var sameDayEvents = await EventService.getbyToday(req.body.start);
@@ -177,25 +179,23 @@ module.exports = {
     }
   },
 
-  
-
   async accept(req, res, next) {
     try {
       var Event = await EventService.update(req.params.id, req.body);
       this.chrone(
         req.body.start,
         15,
-        this.sendNotification('close event', 'the event is about to start after 15 mins', Event._id, req.body.client)
+        "function notification tell the user u have 15 min"
       );
       this.chrone(
         req.body.start,
         60,
-        this.sendNotification('close event', 'the event is about to start after one hour', Event._id, req.body.client)
+        "function notification tell the user u have one hour"
       );
       this.chrone(
         req.body.start,
         -30,
-        this.sendNotification('ready to feedback', 'you can now give your feedback for your barber', Event._id, req.body.client)
+        "function notification tell the user you can give feedback now"
       );
 
       res.send({ msg: "updated" });
