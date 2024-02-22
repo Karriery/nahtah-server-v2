@@ -73,6 +73,26 @@ module.exports = {
     }
   },
 
+  getEventByUser(req, res, next) {
+    EventService.getEventByUser(req.body.userId)
+      .then((events) => {
+        let modifiedEvents = events.map((event) => {
+          if (!event.feedback && !event.rate) {
+            return {
+              feedback: "Event hasn't been rated",
+              rate: "Event hasn't been rated",
+            };
+          }
+          return event;
+        });
+        res.send(modifiedEvents);
+      })
+      .catch((error) => {
+        console.error("Error fetching events:", error);
+        res.status(500).send("Internal Server Error");
+      });
+  },
+
   async create(req, res, next) {
     try {
       var sameDayEvents = await EventService.getbyToday(req.body.start);

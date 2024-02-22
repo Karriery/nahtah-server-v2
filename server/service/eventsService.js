@@ -15,6 +15,9 @@ module.exports = new (class EventService {
       status: status,
     });
   }
+  getEventByUser(userId) {
+    return Event.find({ userId: userId });
+  }
 
   delete(_id) {
     return Event.findOneAndDelete({ _id });
@@ -29,7 +32,7 @@ module.exports = new (class EventService {
     return Event.find({ client }).populate("client");
   }
   getbyToday(today) {
-    const regex = new RegExp(today.slice(0, 10), "i"); // i for case insensitive
+    const regex = new RegExp(today.slice(0, 10), "i");
     return Event.find({ start: { $regex: regex } });
   }
 })();
