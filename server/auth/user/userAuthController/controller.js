@@ -1,4 +1,5 @@
 const UserService = require("../../../service/userService.js");
+const AdminService = require("../../../service/adminService.js");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -54,19 +55,32 @@ module.exports = {
   },
   async login(req, res) {
     try {
-      var User = await UserService.getUserByUsername(req.body.username);
-      if (User) {
-        bcrypt.compare(req.body.password, User.password, (err, result) => {
+      var Admin = await AdminService.getAdminByUsername(req.body.username);
+      if (Admin) {
+        bcrypt.compare(req.body.password, Admin.password, (err, result) => {
           if (result) {
-            var token = jwt.sign({ id: User._id }, "sa7fa leblebi");
-            var access_token = jwt.sign({ id: User._id }, "halelews");
-            res.send({ token, access_token, user: User });
+            var token = jwt.sign({ id: Admin._id }, "sa7fa leblebi");
+            var access_token = jwt.sign({ id: Admin._id }, "halelews");
+            res.send({ token, access_token, user: Admin });
           } else {
             res.send({ msg: "wrong password" });
           }
         });
       } else {
-        res.send({ msg: "wrong User name" });
+        var User = await UserService.getUserByUsername(req.body.username);
+        if (User) {
+          bcrypt.compare(req.body.password, User.password, (err, result) => {
+            if (result) {
+              var token = jwt.sign({ id: User._id }, "sa7fa leblebi");
+              var access_token = jwt.sign({ id: User._id }, "halelews");
+              res.send({ token, access_token, user: User });
+            } else {
+              res.send({ msg: "wrong password" });
+            }
+          });
+        } else {
+          res.send({ msg: "wrong User name" });
+        }
       }
     } catch {
       res.send("get error ");

@@ -10,6 +10,7 @@ router.put("/:id", eventController.updated);
 router.post("/status/", eventController.getEventByStatus);
 router.post("/review", eventController.getEventByUser);
 router.delete("/:id", eventController.deleteByParams);
+router.delete("/", eventController.deleteAllEvents);
 router.post("/send-notification", async (req, res) => {
   try {
     const { title, text, eventId, client } = req.body;

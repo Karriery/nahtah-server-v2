@@ -35,4 +35,7 @@ module.exports = new (class EventService {
     const regex = new RegExp(today.slice(0, 10), "i");
     return Event.find({ start: { $regex: regex } });
   }
+  deleteAllEvents() {
+    return Event.deleteMany({});
+  }
 })();

@@ -56,6 +56,17 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+  deleteAllEvents(req, res, next) {
+    EventService.deleteAllEvents()
+      .then((result) => {
+        res.send({ message: "All events deleted successfully" });
+      })
+      .catch((error) => {
+        console.error("Error deleting events:", error);
+        res.status(500).send("Internal Server Error");
+      });
+  },
+
   async updated(req, res, next) {
     try {
       var Event = await EventService.update(req.params.id, req.body);
@@ -83,7 +94,6 @@ module.exports = {
               return {
                 feedback: "Event hasn't been rated",
                 rate: "-",
-                // Spread the rest of the event properties
               };
             }
             return event;
