@@ -1,14 +1,22 @@
 const express = require("express");
-const app = express();
 const path = require("path");
+const http = require("http");
+const socketIo = require("socket.io");
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const authAdminRout = require("./auth/admin/adminAuthRouter/router.js");
 const authuserRout = require("./auth/user/userAuthRouter/router.js");
 const eventsRout = require("./router/eventsRouter.js");
-const notificationRouter = require('./router/notificationsRouter');
-const newsletterRouter = require('./router/newsletterRouter');
+const notificationRouter = require("./router/notificationsRouter");
+const newsletterRouter = require("./router/newsletterRouter");
 const schedule = require("node-schedule");
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -45,8 +53,8 @@ app.get("/halim", (req, res) => {
   );
   res.send("hello");
 });
-app.use('/notifications', notificationRouter);
-app.use('/newsletter', newsletterRouter);
+app.use("/notifications", notificationRouter);
+app.use("/newsletter", newsletterRouter);
 app.use("/events", eventsRout);
 app.use("/events/upload/:id", upload.single("img"), (req, res) => {
   res.send({ message: "image uploaded successfully" });
@@ -59,7 +67,14 @@ app.use("/static", express.static("public"));
 app.get("/", (req, res) => {
   res.send("auto deploy test");
 });
+io.on("connection", (socket) => {
+  console.log("Client connected");
+  // Handle disconnect
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });
