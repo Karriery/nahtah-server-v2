@@ -41,6 +41,10 @@ app.use(
     origin: "*",
   })
 );
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 app.get("/halim", (req, res) => {
   const startTime = new Date(Date.now() + 5000);

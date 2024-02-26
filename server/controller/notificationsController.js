@@ -1,10 +1,9 @@
 const NotificationService = require("../service/notificationService");
-const io = require("socket.io");
 module.exports = {
   async createNotification(req, res) {
     try {
       const newNotification = await NotificationService.create(req.body);
-      io.emit("newNotification", newNotification);
+      req.io.emit("newNotification", newNotification);
       res.status(201).json(newNotification);
     } catch (error) {
       console.error("Error creating notification:", error);
