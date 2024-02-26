@@ -11,7 +11,7 @@ const NewsletterSchema = new mongoose.Schema(
       required: true,
     },
     admin: {
-      type: mongoose.SchemaTypes.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",
       required: true,
     },
