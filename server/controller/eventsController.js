@@ -88,7 +88,7 @@ module.exports = {
     EventService.getEventByUser(req.body.userId)
       .then((events) => {
         let modifiedEvents = events
-          .filter((event) => event.status === true) // Filter events with status true
+          .filter((event) => event.status === true)
           .map((event) => {
             if (!event.feedback && !event.rate) {
               return {
