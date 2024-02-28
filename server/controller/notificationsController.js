@@ -3,7 +3,7 @@ module.exports = {
   async createNotification(req, res) {
     try {
       const newNotification = await NotificationService.create(req.body);
-      const clientId = req.body.client;
+      const clientId = req.body.client._id;
       req.io.to(clientId).emit("newNotification", newNotification);
 
       res.status(201).json(newNotification);
