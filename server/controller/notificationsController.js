@@ -3,9 +3,7 @@ module.exports = {
   async createNotification(req, res) {
     try {
       const newNotification = await NotificationService.create(req.body);
-      const clientId = req.body.client;
-      req.io.to(clientId).emit("newNotification", newNotification);
-
+      req.io.emit("newNotification", newNotification);
       res.status(201).json(newNotification);
     } catch (error) {
       console.error("Error creating notification:", error);
