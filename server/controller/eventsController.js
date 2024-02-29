@@ -184,34 +184,57 @@ module.exports = {
           console.error("Error saving notification:", error);
         });
 
-      // this.chrone(Event.start, 15, () => {
-      //   this.sendNotification(
-      //     "You have 15 minutes left ",
-      //     "You have 15 minutes left for the event",
-      //     req.params.id,
-      //     req.body.client
-      //   );
-      // });
-      // this.chrone(
-      //   Event.start,
-      //   60,
-      //   this.sendNotification(
-      //     "You have 1 hour left ",
-      //     "You have 1 hour left for the event",
-      //     req.params.id,
-      //     req.body.client
-      //   )
-      // );
-      // this.chrone(
-      //   Event.start,
-      //   -30,
-      //   this.sendNotification(
-      //     "You are late",
-      //     "You are late for the event",
-      //     req.params.id,
-      //     req.body.client
-      //   )
-      // );
+      this.chrone(Event.start, 15, () => {
+        const notificationData = {
+          title: "Event started",
+          text: "The event has started",
+          redirection: req.params.id,
+          client: req.body.client,
+          time: new Date().toISOString(),
+        };
+        // save the notification to the database
+        NotificationService.create(notificationData)
+          .then((notification) => {
+            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+          })
+          .catch((error) => {
+            console.error("Error saving notification:", error);
+          });
+      });
+      this.chrone(Event.start, 60, () => {
+        const notificationData = {
+          title: "Event finished",
+          text: "The event has finished",
+          redirection: req.params.id,
+          client: req.body.client,
+          time: new Date().toISOString(),
+        };
+        // save the notification to the database
+        NotificationService.create(notificationData)
+          .then((notification) => {
+            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+          })
+          .catch((error) => {
+            console.error("Error saving notification:", error);
+          });
+      });
+      this.chrone(Event.start, -30, () => {
+        const notificationData = {
+          title: "Event finished",
+          text: "The event has finished",
+          redirection: req.params.id,
+          client: req.body.client,
+          time: new Date().toISOString(),
+        };
+        // save the notification to the database
+        NotificationService.create(notificationData)
+          .then((notification) => {
+            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+          })
+          .catch((error) => {
+            console.error("Error saving notification:", error);
+          });
+      });
 
       res.send({ msg: "updated" });
     } catch (next) {
