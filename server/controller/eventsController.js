@@ -178,8 +178,7 @@ module.exports = {
       // save the notification to the database
       NotificationService.create(notificationData)
         .then((notification) => {
-          console.log("Notification saved successfully:", notification);
-          // ba3d successful save, success response (3maltha fil eventRouter)
+          req.io.emit(`newNOTIF/${client._id}`, notification); // Emit socket event
         })
         .catch((error) => {
           console.error("Error saving notification:", error);
@@ -192,20 +191,39 @@ module.exports = {
   async accept(req, res, next) {
     try {
       var Event = await EventService.update(req.params.id, req.body);
-      this.chrone(
-        req.body.start,
-        15,
-        "function notification tell the user u have 15 min"
+      this.sendNotification(
+        "Event Status Changed",
+        "The status of the event has been updated",
+        req.params.id,
+        req.body.client
       );
+      this.chrone(req.body.start, 15, () => {
+        this.sendNotification(
+          "You have 15 minutes left ",
+          "You have 15 minutes left for the event",
+          req.params.id,
+          req.body.client
+        );
+      });
       this.chrone(
         req.body.start,
         60,
-        "function notification tell the user u have one hour"
+        this.sendNotification(
+          "You have 1 hour left ",
+          "You have 1 hour left for the event",
+          req.params.id,
+          req.body.client
+        )
       );
       this.chrone(
         req.body.start,
         -30,
-        "function notification tell the user you can give feedback now"
+        this.sendNotification(
+          "You are late",
+          "You are late for the event",
+          req.params.id,
+          req.body.client
+        )
       );
 
       res.send({ msg: "updated" });
