@@ -27,6 +27,6 @@ module.exports = new (class NotificationService {
     return Notification.find({ start: { $regex: regex } });
   }
   async findByUserId(userId) {
-  return Notification.find({ userId });
-}
+    return Notification.find({ userId });
+  }
 })();

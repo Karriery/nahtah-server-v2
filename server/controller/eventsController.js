@@ -165,66 +165,53 @@ module.exports = {
     }
   },
 
-  sendNotification(title, text, eventId, client) {
+  async accept(req, res, next) {
     try {
-      // new notification object
+      var Event = await EventService.update(req.params.id, req.body);
       const notificationData = {
-        title: title,
-        text: text,
-        redirection: eventId,
-        client: client, // hné make sure bech t3adi el User object
+        title: "Event accepted",
+        text: "You have 15 minutes left for the event",
+        redirection: req.params.id,
+        client: req.body.client, // hné make sure bech t3adi el User object
         time: new Date().toISOString(),
       };
       // save the notification to the database
       NotificationService.create(notificationData)
         .then((notification) => {
-          req.io.emit(`newNOTIF/${client._id}`, notification); // Emit socket event
+          req.io.emit(`newNOTIF/${req.body.client}`, notification);
         })
         .catch((error) => {
           console.error("Error saving notification:", error);
         });
-    } catch (error) {
-      console.error("Error creating and saving notification:", error);
-    }
-  },
 
-  async accept(req, res, next) {
-    try {
-      var Event = await EventService.update(req.params.id, req.body);
-      this.sendNotification(
-        "Event Status Changed",
-        "The status of the event has been updated",
-        req.params.id,
-        req.body.client
-      );
-      this.chrone(req.body.start, 15, () => {
-        this.sendNotification(
-          "You have 15 minutes left ",
-          "You have 15 minutes left for the event",
-          req.params.id,
-          req.body.client
-        );
-      });
-      this.chrone(
-        req.body.start,
-        60,
-        this.sendNotification(
-          "You have 1 hour left ",
-          "You have 1 hour left for the event",
-          req.params.id,
-          req.body.client
-        )
-      );
-      this.chrone(
-        req.body.start,
-        -30,
-        this.sendNotification(
-          "You are late",
-          "You are late for the event",
-          req.params.id,
-          req.body.client
-        )
-      );
+      // this.chrone(Event.start, 15, () => {
+      //   this.sendNotification(
+      //     "You have 15 minutes left ",
+      //     "You have 15 minutes left for the event",
+      //     req.params.id,
+      //     req.body.client
+      //   );
+      // });
+      // this.chrone(
+      //   Event.start,
+      //   60,
+      //   this.sendNotification(
+      //     "You have 1 hour left ",
+      //     "You have 1 hour left for the event",
+      //     req.params.id,
+      //     req.body.client
+      //   )
+      // );
+      // this.chrone(
+      //   Event.start,
+      //   -30,
+      //   this.sendNotification(
+      //     "You are late",
+      //     "You are late for the event",
+      //     req.params.id,
+      //     req.body.client
+      //   )
+      // );
 
       res.send({ msg: "updated" });
     } catch (next) {
