@@ -71,13 +71,6 @@ app.use("/static", express.static("public"));
 app.get("/", (req, res) => {
   res.send("auto deploy test");
 });
-io.on("connection", (socket) => {
-  console.log("Client connected");
-  // Handle disconnect
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-  });
-});
 
 server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
