@@ -168,21 +168,32 @@ module.exports = {
   async accept(req, res, next) {
     try {
       var Event = await EventService.update(req.params.id, req.body);
-      const notificationData = {
-        title: "Event accepted",
-        text: "You have 15 minutes left for the event",
-        redirection: req.params.id,
-        client: req.body.client, // hné make sure bech t3adi el User object
-        time: new Date().toISOString(),
-      };
-      // save the notification to the database
-      NotificationService.create(notificationData)
-        .then((notification) => {
-          req.io.emit(`newNOTIF/${req.body.client}`, notification);
-        })
-        .catch((error) => {
-          console.error("Error saving notification:", error);
-        });
+      if (req.body.status === true) {
+        const notificationData = {
+          title: "تم قبول الحدث",
+          text: "تم قبول الحدث من قبل العامل",
+          redirection: req.params.id,
+          client: req.body.client,
+          time: new Date().toISOString(),
+        };
+      } else {
+        const notificationData = {
+          title: "تم رفض الحدث",
+          text: "تم رفض الحدث من قبل العامل",
+          redirection: req.params.id,
+          client: req.body.client,
+          time: new Date().toISOString(),
+        };
+
+        // save the notification to the database
+        NotificationService.create(notificationData)
+          .then((notification) => {
+            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+          })
+          .catch((error) => {
+            console.error("Error saving notification:", error);
+          });
+      }
 
       this.chrone(Event.start, 15, () => {
         const notificationData = {
