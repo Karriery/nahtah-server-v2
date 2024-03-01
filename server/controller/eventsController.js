@@ -175,6 +175,14 @@ module.exports = {
           client: req.body.client,
           time: new Date().toISOString(),
         };
+
+        NotificationService.create(notificationData)
+          .then((notification) => {
+            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+          })
+          .catch((error) => {
+            console.error("Error saving notification:", error);
+          });
       } else {
         const notificationData = {
           title: "تم رفض الحدث",
@@ -184,7 +192,6 @@ module.exports = {
           time: new Date().toISOString(),
         };
 
-        // save the notification to the database
         NotificationService.create(notificationData)
           .then((notification) => {
             req.io.emit(`newNOTIF/${req.body.client}`, notification);
