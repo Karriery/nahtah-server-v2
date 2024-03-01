@@ -122,7 +122,6 @@ module.exports = {
       }
 
       var Event = await EventService.create(req.body);
-      console.log("Event created:", Event);
       req.io.emit("newEvent/Admin", Event);
       res.send({ msg: "inserted" });
       return;
