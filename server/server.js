@@ -72,6 +72,13 @@ app.get("/", (req, res) => {
   res.send("auto deploy test");
 });
 
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
+
 server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });

@@ -175,7 +175,6 @@ module.exports = {
           client: req.body.client,
           time: new Date().toISOString(),
         };
-
         NotificationService.create(notificationData)
           .then((notification) => {
             req.io.emit(`newNOTIF/${req.body.client}`, notification);
