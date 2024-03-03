@@ -25,7 +25,14 @@ module.exports = {
       res.status(500).send(error);
     }
   },
-
+  async getByUserId(req, res) {
+    try {
+      const offDays = await offDaysService.getByUserId(req.params.userId);
+      res.status(200).send(offDays);
+    } catch (error) {
+      res.status(500).send;
+    }
+  },
   async getByuserIdAndDate(req, res) {
     try {
       const { userId, date } = req.body;
