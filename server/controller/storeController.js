@@ -32,19 +32,6 @@ module.exports = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
-  async getStoreByDate(req, res) {
-    try {
-      const date = req.params.date;
-      const store = await StoreService.getByDate(date);
-      if (!store) {
-        return res.status(404).json({ error: "Store not found" });
-      }
-      res.status(200).json(store);
-    } catch (error) {
-      console.error("Error fetching store:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  },
   async updateStore(req, res) {
     try {
       const storeId = req.params.id;

@@ -10,9 +10,7 @@ class StoreService {
   async getById(id) {
     return Store.findById(id);
   }
-  async getByDate(date) {
-    return Store.find({ date });
-  }
+
   async update(id, data) {
     return Store.findByIdAndUpdate;
   }
@@ -20,5 +18,4 @@ class StoreService {
     return Store.findByIdAndDelete(id);
   }
 }
-
 module.exports = new StoreService();

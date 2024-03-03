@@ -4,7 +4,6 @@ mongoose.Promise = global.Promise;
 
 const StoreSchema = new mongoose.Schema(
   {
-    date: String,
     timeOpen: String,
     timeClose: String,
     userId: String,
