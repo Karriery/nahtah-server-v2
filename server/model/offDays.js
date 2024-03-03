@@ -5,7 +5,7 @@ mongoose.Promise = global.Promise;
 const offDaysSchema = new mongoose.Schema(
   {
     userId: String,
-    date: Date,
+    date: String,
   },
   {
     timestamps: true,
