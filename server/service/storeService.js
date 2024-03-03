@@ -1,6 +1,9 @@
 var Store = require("../model/Store.js");
 
 class StoreService {
+  async findOne() {
+    return Store.findOne();
+  }
   async create(data) {
     return Store.create(data);
   }
