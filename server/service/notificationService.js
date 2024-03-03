@@ -13,6 +13,9 @@ module.exports = new (class NotificationService {
   delete(_id) {
     return Notification.findOneAndDelete({ _id });
   }
+  deleteAll() {
+    return Notification.deleteMany();
+  }
   update(_id, data) {
     return Notification.findOneAndUpdate({ _id }, data);
   }

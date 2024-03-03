@@ -20,6 +20,15 @@ module.exports = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+  async deleteAllNotifications(req, res) {
+    try {
+      await NotificationService.deleteAll();
+      res.status(200).json({ message: "All notifications deleted" });
+    } catch (error) {
+      console.error("Error deleting notifications:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
   async updateNotification(req, res) {
     try {
       const notificationId = req.params.id;
