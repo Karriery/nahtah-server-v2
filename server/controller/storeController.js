@@ -4,7 +4,6 @@ module.exports = {
   async createStore(req, res) {
     try {
       const store = await StoreService.create(req.body);
-      req.io.emit("store", store);
       res.status(201).json(store);
     } catch (error) {
       console.error("Error creating store:", error);
