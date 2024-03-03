@@ -164,6 +164,16 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+  async getEventByUserIdAndStart(req, res, next) {
+    try {
+      const { userId, start } = req.body;
+      const events = await EventService.getEventByUserIdAndStart(userId, start);
+      res.send(events);
+    } catch (error) {
+      console.error("Error fetching events by userId:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
 
   async accept(req, res, next) {
     try {
