@@ -18,8 +18,10 @@ const eventsRout = require("./router/eventsRouter.js");
 const notificationRouter = require("./router/notificationsRouter");
 const newsletterRouter = require("./router/newsletterRouter");
 const storeRouter = require("./router/StoreRouter");
+const offDaysRouter = require("./router/offDaysRouter");
 const schedule = require("node-schedule");
 const multer = require("multer");
+const { off } = require("process");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./uploads");
@@ -65,6 +67,7 @@ app.use("/events/upload/:id", upload.single("img"), (req, res) => {
   res.send({ message: "image uploaded successfully" });
 });
 app.use("/store", storeRouter);
+app.use("/offdays", offDaysRouter);
 
 app.use("/auth/admin", authAdminRout);
 app.use("/auth/user", authuserRout);
