@@ -6,7 +6,6 @@ const StoreSchema = new mongoose.Schema(
   {
     timeOpen: String,
     timeClose: String,
-    userId: String,
   },
   {
     timestamps: true,

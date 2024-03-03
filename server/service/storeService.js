@@ -17,5 +17,8 @@ class StoreService {
   async delete(id) {
     return Store.findByIdAndDelete(id);
   }
+  async DeleteAll() {
+    return Store.deleteMany();
+  }
 }
 module.exports = new StoreService();

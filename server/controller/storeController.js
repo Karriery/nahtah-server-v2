@@ -3,13 +3,24 @@ const StoreService = require("../service/storeService");
 module.exports = {
   async createStore(req, res) {
     try {
-      const store = await StoreService.create(req.body);
-      res.status(201).json(store);
+      const existingStore = await StoreService.findOne();
+
+      if (existingStore) {
+        const updatedStore = await StoreService.update(
+          existingStore._id,
+          req.body
+        );
+        res.status(200).json(updatedStore);
+      } else {
+        const newStore = await StoreService.create(req.body);
+        res.status(201).json(newStore);
+      }
     } catch (error) {
-      console.error("Error creating store:", error);
+      console.error("Error creating/updating store:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
   async getAllStores(req, res) {
     try {
       const stores = await StoreService.getAll();
@@ -49,6 +60,15 @@ module.exports = {
       res.status(204).end();
     } catch (error) {
       console.error("Error deleting store:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
+  async deleteAllStores(req, res) {
+    try {
+      await StoreService.DeleteAll();
+      res.status(204).end();
+    } catch (error) {
+      console.error("Error deleting stores:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   },
