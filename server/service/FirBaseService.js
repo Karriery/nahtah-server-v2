@@ -12,29 +12,30 @@ const firebaseConfig = {
   appId: "1:1027183268875:web:d13d3775beb0da938ce30e",
 };
 
-// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
 
-// Get a reference to the database service
 const db = getDatabase(app);
 const dbRef = ref(db);
 
-// Function to save token to the database
 const saveToken = async (userId, token) => {
   const values = (await get(child(dbRef, `users/${userId}`))).val() ?? {};
   const payload = { ...values, token };
   set(ref(db, `users/${userId}`), payload);
 };
 
-// Function to get token from the database
 const getToken = async (userId) => {
   const values = (await get(child(dbRef, `users/${userId}`))).val() ?? {};
   const { token } = values;
   return token;
 };
 
+const deleteToken = async (userId) => {
+  set(ref(db, `users/${userId}`), null);
+};
+
 module.exports = {
   app,
   saveToken,
   getToken,
+  deleteToken,
 };
