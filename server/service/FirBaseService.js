@@ -18,11 +18,9 @@ const db = getDatabase(app);
 const dbRef = ref(db);
 
 const saveToken = async (userId, token) => {
-  const tokensRef = ref(db, `users/${userId}/tokens`);
-  const snapshot = await get(tokensRef);
-  let tokens = snapshot.val() || {};
-  tokens[token] = true;
-  await set(tokensRef, tokens);
+  const values = (await get(child(dbRef, `users/${userId}`))).val() ?? {};
+  const payload = { ...values, token };
+  set(ref(db, `users/${userId}`), payload);
 };
 
 const getToken = async (userId) => {
@@ -31,9 +29,8 @@ const getToken = async (userId) => {
   return token;
 };
 
-const deleteToken = async (userId, token) => {
-  const tokenRef = ref(db, `users/${userId}/tokens/${token}`);
-  await remove(tokenRef);
+const deleteToken = async (userId) => {
+  set(ref(db, `users/${userId}`), null);
 };
 
 module.exports = {
