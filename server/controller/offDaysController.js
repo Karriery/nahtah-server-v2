@@ -1,17 +1,26 @@
-const offDaysService = require("../service/offDaysService.js");
+const OffDaysService = require("../service/offDaysService.js");
 
 module.exports = {
   async create(req, res) {
     try {
-      const offDays = await offDaysService.create(req.body);
-      res.status(201).send(offDays);
+      const { userId, date } = req.body;
+      const offDays = await OffDaysService.getByUserIdAndDate(userId, date);
+      if (offDays.length) {
+        res.status(400).json({ error: "Off day already exists" });
+        return;
+      } else {
+        const offDay = await OffDaysService.create({ userId, date });
+        res.status(201).json(offDay);
+      }
     } catch (error) {
-      res.status;
+      console.error("Error creating off day:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   },
+
   async getAll(req, res) {
     try {
-      const offDays = await offDaysService.getAll();
+      const offDays = await OffDaysService.getAll();
       res.status(200).send(offDays);
     } catch (error) {
       res.status(500).send(error);
@@ -19,7 +28,7 @@ module.exports = {
   },
   async getById(req, res) {
     try {
-      const offDays = await offDaysService.getById(req.params.id);
+      const offDays = await OffDaysService.getById(req.params.id);
       res.status(200).send(offDays);
     } catch (error) {
       res.status(500).send(error);
@@ -27,7 +36,7 @@ module.exports = {
   },
   async getByUserId(req, res) {
     try {
-      const offDays = await offDaysService.getByUserId(req.params.userId);
+      const offDays = await OffDaysService.getByUserId(req.params.userId);
       res.status(200).send(offDays);
     } catch (error) {
       res.status(500).send;
@@ -36,7 +45,7 @@ module.exports = {
   async getByuserIdAndDate(req, res) {
     try {
       const { userId, date } = req.body;
-      const offDays = await offDaysService.getByUserIdAndDate(userId, date);
+      const offDays = await OffDaysService.getByUserIdAndDate(userId, date);
       res.status(200).send(offDays);
     } catch (error) {
       res.status(500).send(error);
@@ -45,7 +54,7 @@ module.exports = {
 
   async update(req, res) {
     try {
-      const offDays = await offDaysService.update(req.params.id, req.body);
+      const offDays = await OffDaysService.update(req.params.id, req.body);
       res.status(200).send(offDays);
     } catch (error) {
       res.status(500).send(error);
@@ -53,7 +62,7 @@ module.exports = {
   },
   async delete(req, res) {
     try {
-      const offDays = await offDaysService.delete(req.params.id);
+      const offDays = await OffDaysService.delete(req.params.id);
       res.status(200).send(offDays);
     } catch (error) {
       res.status(500).send(error);
@@ -61,7 +70,7 @@ module.exports = {
   },
   async deleteAll(req, res) {
     try {
-      const offDays = await offDaysService.DeleteAll();
+      const offDays = await OffDaysService.DeleteAll();
       res.status(200).send(offDays);
     } catch (error) {
       res.status(500).send(error);

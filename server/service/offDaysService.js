@@ -1,6 +1,6 @@
 var offDays = require("../model/offDays.js");
 
-class offDaysService {
+class OffDaysService {
   async create(data) {
     return offDays.create(data);
   }
@@ -26,4 +26,4 @@ class offDaysService {
     return offDays.deleteMany();
   }
 }
-module.exports = new offDaysService();
+module.exports = new OffDaysService();
