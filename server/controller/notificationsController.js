@@ -3,13 +3,21 @@ module.exports = {
   async createNotification(req, res) {
     try {
       const newNotification = await NotificationService.create(req.body);
-      req.io.emit(`newNotification/${req.body.client}`, newNotification);
-      res.status(201).json(newNotification);
+      req.io.emit("newNotification", newNotification, (error) => {
+        if (error) {
+          console.error("Error emitting notification:", error);
+          res.status(500).json({ error: "Error emitting notification" });
+        } else {
+          console.log("Notification emitted successfully");
+          res.status(201).json(newNotification);
+        }
+      });
     } catch (error) {
       console.error("Error creating notification:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
   async getNotificationsByClient(req, res) {
     try {
       const client = req.params.client;

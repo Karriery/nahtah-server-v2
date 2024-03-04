@@ -79,13 +79,6 @@ app.get("/", (req, res) => {
   res.send("auto deploy test");
 });
 
-io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
-
 app.post("/registerPushToken", jsonParser, async (req, res) => {
   const { token, userId } = req.body;
   await firebaseConfig.saveToken(userId, token);
