@@ -85,6 +85,7 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
+
 app.post("/registerPushToken", jsonParser, async (req, res) => {
   const { token, userId } = req.body;
   await firebaseConfig.saveToken(userId, token);
@@ -93,14 +94,12 @@ app.post("/registerPushToken", jsonParser, async (req, res) => {
 
 app.post("/send", async (req, res) => {
   const { userId, data } = req.body;
-  const token = await firebaseConfig.getToken(req.body.userId);
+  const token = await firebaseConfig.getToken(userId);
   // Check if token is valid
   if (!Expo.isExpoPushToken(token)) {
     console.log("Invalid token", token);
     return res.status(400).send("Invalid token");
   }
-
-  // Construct push notification message
   const messages = [
     {
       to: token,
@@ -111,7 +110,6 @@ app.post("/send", async (req, res) => {
     },
   ];
 
-  // Send push notification message
   try {
     const chunks = expo.chunkPushNotifications(messages);
 
