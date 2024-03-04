@@ -6,7 +6,7 @@ module.exports = {
       const { userId, date } = req.body;
       const offDays = await OffDaysService.getByUserIdAndDate(userId, date);
       if (offDays.length) {
-        res.status(400).json({ error: "Off day already exists" });
+        res.send({ alert: "off day already exist" });
         return;
       } else {
         const offDay = await OffDaysService.create({ userId, date });
