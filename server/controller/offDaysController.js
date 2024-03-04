@@ -13,7 +13,6 @@ module.exports = {
         res.status(201).json(offDay);
       }
     } catch (error) {
-      console.error("Error creating off day:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   },
