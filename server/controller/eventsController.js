@@ -1,23 +1,23 @@
 const EventService = require("../service/eventsService.js");
 const NotificationService = require("../service/notificationService.js");
 const schedule = require("node-schedule");
-const { initializeApp } = require("firebase/app");
+// const { initializeApp } = require("firebase/app");
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDYjPRt6wBdGo9mbdf-MlGM6LqfG5Pz6Wo",
-  authDomain: "myproject-ee9bd.firebaseapp.com",
-  databaseURL: "https://myproject-ee9bd.firebaseio.com",
-  projectId: "myproject-ee9bd",
-  storageBucket: "myproject-ee9bd.appspot.com",
-  messagingSenderId: "66258228658",
-  appId: "1:66258228658:web:bf8e2339e25f5c238f80ab",
-};
+// // Your web app's Firebase configuration
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDYjPRt6wBdGo9mbdf-MlGM6LqfG5Pz6Wo",
+//   authDomain: "myproject-ee9bd.firebaseapp.com",
+//   databaseURL: "https://myproject-ee9bd.firebaseio.com",
+//   projectId: "myproject-ee9bd",
+//   storageBucket: "myproject-ee9bd.appspot.com",
+//   messagingSenderId: "66258228658",
+//   appId: "1:66258228658:web:bf8e2339e25f5c238f80ab",
+// };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 module.exports = {
   async getEvent(req, res, next) {
     try {

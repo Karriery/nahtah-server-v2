@@ -15,10 +15,10 @@ const bodyParser = require("body-parser");
 const authAdminRout = require("./auth/admin/adminAuthRouter/router.js");
 const authuserRout = require("./auth/user/userAuthRouter/router.js");
 const eventsRout = require("./router/eventsRouter.js");
-const notificationRouter = require("./router/notificationsRouter");
-const newsletterRouter = require("./router/newsletterRouter");
-const storeRouter = require("./router/StoreRouter");
-const offDaysRouter = require("./router/offDaysRouter");
+const notificationRouter = require("./router/notificationsRouter.js");
+const newsletterRouter = require("./router/newsletterRouter.js");
+const storeRouter = require("./router/StoreRouter.js");
+const offDaysRouter = require("./router/offDaysRouter.js");
 const schedule = require("node-schedule");
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -30,6 +30,10 @@ const storage = multer.diskStorage({
     cb(null, req.params.id + "." + file.originalname.split(".").pop());
   },
 });
+const jsonParser = bodyParser.json();
+const firebaseConfig = require("./service/FirBaseService.js");
+const { Expo } = require("expo-server-sdk");
+const expo = new Expo();
 
 const upload = multer({ storage });
 
@@ -47,7 +51,6 @@ app.use((req, res, next) => {
   req.io = io;
   next();
 });
-
 app.get("/halim", (req, res) => {
   const startTime = new Date(Date.now() + 5000);
   const endTime = new Date(startTime.getTime() + 5000);
@@ -81,6 +84,47 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
+});
+app.post("/registerPushToken", jsonParser, async (req, res) => {
+  const { token, userId } = req.body;
+  await firebaseConfig.saveToken(userId, token);
+  res.status(200).send("Token saved");
+});
+
+app.post("/send", async (req, res) => {
+  const { userId, data } = req.body;
+  const token = await firebaseConfig.getToken(req.body.userId);
+  // Check if token is valid
+  if (!Expo.isExpoPushToken(token)) {
+    console.log("Invalid token", token);
+    return res.status(400).send("Invalid token");
+  }
+
+  // Construct push notification message
+  const messages = [
+    {
+      to: token,
+      sound: "default",
+      title: "New Notification",
+      body: "The event has been accepted",
+      data: data || {},
+    },
+  ];
+
+  // Send push notification message
+  try {
+    const chunks = expo.chunkPushNotifications(messages);
+
+    for (let chunk of chunks) {
+      const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+      console.log(ticketChunk);
+    }
+
+    res.status(200).send("Notification sent");
+  } catch (error) {
+    console.error("Error sending push notification:", error);
+    res.status(500).send("Error sending push notification");
+  }
 });
 
 server.listen(PORT, () => {
