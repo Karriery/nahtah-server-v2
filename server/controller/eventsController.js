@@ -249,7 +249,7 @@ module.exports = {
         const notificationData = {
           title: "Event finished",
           text: "The event has finished",
-          client: req.body.client,
+          client: client,
           time: new Date().toISOString(),
         };
         // save the notification to the database
