@@ -29,6 +29,11 @@ const getToken = async (userId) => {
   return token;
 };
 
+const GetUsers = async () => {
+  const values = (await get(child(dbRef, `users`))).val() ?? {};
+  return values;
+};
+
 const deleteToken = async (userId) => {
   set(ref(db, `users/${userId}`), null);
 };
@@ -38,4 +43,5 @@ module.exports = {
   saveToken,
   getToken,
   deleteToken,
+  GetUsers,
 };

@@ -124,6 +124,11 @@ app.post("/deleteToken", jsonParser, async (req, res) => {
   res.status(200).send("Token deleted");
 });
 
+app.get("/usersConnected", async (req, res) => {
+  const users = await firebaseConfig.GetUsers();
+  res.status(200).json(users);
+});
+
 server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });
