@@ -86,7 +86,7 @@ app.post("/registerPushToken", jsonParser, async (req, res) => {
 });
 
 app.post("/send", async (req, res) => {
-  const { userId, data } = req.body;
+  const { userId, title, body, data } = req.body;
   const token = await firebaseConfig.getToken(userId);
   // Check if token is valid
   if (!Expo.isExpoPushToken(token)) {
@@ -97,8 +97,8 @@ app.post("/send", async (req, res) => {
     {
       to: token,
       sound: "default",
-      title: "New Notification",
-      body: "The event has been accepted",
+      title: title || "Event",
+      body: body || "Event",
       data: data || {},
     },
   ];
