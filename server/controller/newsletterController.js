@@ -4,13 +4,7 @@ module.exports = {
   async createNewsletter(req, res) {
     try {
       const newsletter = await NewsletterService.create(req.body);
-      req.io.emit("newsletter", newsletter, (error) => {
-        if (error) {
-          res.status(500).json({ error: "Internal server error" });
-        } else {
-          res.status(201).json(newsletter);
-        }
-      });
+      req.io.emit("newsletter", newsletter);
     } catch (error) {
       console.error("Error creating newsletter:", error);
       res.status(500).json({ error: "Internal server error" });
