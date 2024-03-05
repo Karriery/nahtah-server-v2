@@ -6,7 +6,7 @@ module.exports = {
       req.io.emit("newNotification", newNotification, (error) => {
         if (error) {
           console.error("Error emitting notification:", error);
-          res.status(500).json({ error: "Error emitting notification" });
+          res.status(500).json({ error });
         } else {
           console.log("Notification emitted successfully");
           res.status(201).json(newNotification);
