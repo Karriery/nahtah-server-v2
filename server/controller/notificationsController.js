@@ -34,7 +34,6 @@ module.exports = {
   async updateNotification(req, res) {
     try {
       const notificationId = req.params.id;
-      console.log(notificationId);
       const updatedNotification = await NotificationService.update(
         notificationId,
         req.body

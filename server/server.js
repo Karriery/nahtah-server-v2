@@ -26,7 +26,6 @@ const storage = multer.diskStorage({
     cb(null, "./uploads");
   },
   filename: function (req, file, cb) {
-    console.log(req.params.id, "req.params.id");
     cb(null, req.params.id + "." + file.originalname.split(".").pop());
   },
 });
@@ -90,7 +89,6 @@ app.post("/send", async (req, res) => {
   const token = await firebaseConfig.getToken(userId);
   // Check if token is valid
   if (!Expo.isExpoPushToken(token)) {
-    console.log("Invalid token", token);
     return res.status(400).send("Invalid token");
   }
   const messages = [
@@ -108,7 +106,6 @@ app.post("/send", async (req, res) => {
 
     for (let chunk of chunks) {
       const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-      console.log(ticketChunk);
     }
 
     res.status(200).send("Notification sent");

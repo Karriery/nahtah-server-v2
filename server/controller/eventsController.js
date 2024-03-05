@@ -126,7 +126,6 @@ module.exports = {
       res.send({ msg: "inserted" });
       return;
     } catch (next) {
-      console.log(next);
       res.status(401).json(next);
     }
   },
@@ -151,7 +150,6 @@ module.exports = {
       res.send({ msg: "inserted" });
       return;
     } catch (next) {
-      console.log(next);
       res.status(401).json(next);
     }
   },
@@ -180,8 +178,6 @@ module.exports = {
       const { status, client } = req.body;
       const { _id } = req.params;
       var Event = await EventService.updateStatus(_id, status);
-      console.log(Event);
-      console.log(status, client, _id);
       if (req.body.status === true) {
         const notificationData = {
           title: "تم قبول الحدث",
@@ -264,7 +260,6 @@ module.exports = {
 
       res.send({ msg: "updated" });
     } catch (next) {
-      console.log(next);
       res.status(401).json(next);
     }
   },
@@ -276,5 +271,4 @@ function chrone(date, minutesBeforeDate, callback) {
     targetDateTime.getTime() - minutesBeforeDate * 60000
   );
   const job = schedule.scheduleJob(fifteenMinutesBefore, callback);
-  console.log("Job scheduled to run at:", fifteenMinutesBefore);
 }
