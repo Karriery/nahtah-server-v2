@@ -12,6 +12,6 @@ router.post("/status/", eventController.getEventByStatus);
 router.post("/review", eventController.getEventByUser);
 router.delete("/:id", eventController.deleteByParams);
 router.delete("/", eventController.deleteAllEvents);
-router.put("/accept/:id", eventController.accept);
+router.put("/accept", eventController.accept);
 
 module.exports = router;
