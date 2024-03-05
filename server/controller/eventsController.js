@@ -186,13 +186,14 @@ module.exports = {
 
   async accept(req, res, next) {
     try {
-      const { _id, status, client } = req.body;
+      const { status, client } = req.body;
+      const { _id } = req.params;
       var Event = await EventService.updateStatus(_id, status);
       if (req.body.status === true) {
         const notificationData = {
           title: "تم قبول الحدث",
           text: "تم قبول الحدث من قبل العامل",
-          client: req.body.client,
+          client: client,
           time: new Date().toISOString(),
         };
         NotificationService.create(notificationData)
@@ -206,7 +207,7 @@ module.exports = {
         const notificationData = {
           title: "تم رفض الحدث",
           text: "تم رفض الحدث من قبل العامل",
-          client: req.body.client,
+          client: client,
           time: new Date().toISOString(),
         };
 
@@ -223,7 +224,7 @@ module.exports = {
         const notificationData = {
           title: "Event started",
           text: "The event has started",
-          client: req.body.client,
+          client: client,
           time: new Date().toISOString(),
         };
         // save the notification to the database
@@ -239,7 +240,7 @@ module.exports = {
         const notificationData = {
           title: "Event finished",
           text: "The event has finished",
-          client: req.body.client,
+          client: client,
           time: new Date().toISOString(),
         };
         // save the notification to the database

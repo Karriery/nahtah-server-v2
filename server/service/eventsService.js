@@ -30,7 +30,7 @@ module.exports = new (class EventService {
   }
 
   updateStatus(_id, status) {
-    return Event.findOneAndUpdate({ _id }, { status: status });
+    return Event.findOneAndUpdate({ _id }, { status });
   }
 
   findbyClient(client) {
