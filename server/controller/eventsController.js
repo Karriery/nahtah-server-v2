@@ -188,7 +188,7 @@ module.exports = {
         };
         NotificationService.create(notificationData)
           .then((notification) => {
-            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+            req.io.emit("newNOTIF", notification);
           })
           .catch((error) => {
             console.error("Error saving notification:", error);
@@ -204,7 +204,7 @@ module.exports = {
 
         NotificationService.create(notificationData)
           .then((notification) => {
-            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+            req.io.emit("newNOTIF", notification);
           })
           .catch((error) => {
             console.error("Error saving notification:", error);
@@ -222,7 +222,7 @@ module.exports = {
         // save the notification to the database
         NotificationService.create(notificationData)
           .then((notification) => {
-            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+            req.io.emit("newNOTIF", notification);
           })
           .catch((error) => {
             console.error("Error saving notification:", error);
@@ -239,7 +239,7 @@ module.exports = {
         // save the notification to the database
         NotificationService.create(notificationData)
           .then((notification) => {
-            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+            req.io.emit("newNOTIF", notification);
           })
           .catch((error) => {
             console.error("Error saving notification:", error);
@@ -256,7 +256,7 @@ module.exports = {
         // save the notification to the database
         NotificationService.create(notificationData)
           .then((notification) => {
-            req.io.emit(`newNOTIF/${req.body.client}`, notification);
+            req.io.emit("newNOTIF", notification);
           })
           .catch((error) => {
             console.error("Error saving notification:", error);
