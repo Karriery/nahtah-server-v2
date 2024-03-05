@@ -3,9 +3,7 @@ module.exports = {
   async createNotification(req, res) {
     try {
       const newNotification = await NotificationService.create(req.body);
-      req.io.emit("newNotification", newNotification, (error) => {
-        res.status(201).json(newNotification);
-      });
+      res.status(201).json(newNotification);
     } catch (error) {
       console.error("Error creating notification:", error);
       res.status(500).json({ error: "Internal server error" });
