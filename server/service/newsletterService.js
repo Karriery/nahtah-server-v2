@@ -1,4 +1,4 @@
-const Newsletter = require('../model/newsletterModel');
+const Newsletter = require("../model/newsletterModel");
 
 class NewsletterService {
   async create(data) {
@@ -18,6 +18,9 @@ class NewsletterService {
   }
   async getByAdminId(adminId) {
     return Newsletter.find({ admin: adminId });
+  }
+  async deleteAll() {
+    return Newsletter.deleteMany();
   }
 }
 

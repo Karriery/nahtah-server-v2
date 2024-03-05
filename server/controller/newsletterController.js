@@ -72,4 +72,13 @@ module.exports = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+  async deleteAllNewsletters(req, res) {
+    try {
+      await NewsletterService.deleteAll();
+      res.status(200).json({ message: "All newsletters deleted" });
+    } catch (error) {
+      console.error("Error deleting newsletters:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
 };
