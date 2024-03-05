@@ -177,7 +177,7 @@ module.exports = {
 
   async accept(req, res, next) {
     try {
-      var Event = await EventService.update(req.params.id, req.body);
+      var Event = await EventService.updateStatus(req.params.id, req.body);
       if (req.body.status === true) {
         const notificationData = {
           title: "تم قبول الحدث",

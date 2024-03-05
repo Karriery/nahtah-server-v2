@@ -42,4 +42,15 @@ module.exports = new (class EventService {
   deleteAllEvents() {
     return Event.deleteMany({});
   }
+  updateStatus(_id, status, client) {
+    return Event.findOneAndUpdate(
+      {
+        _id,
+      },
+      {
+        status,
+        client,
+      }
+    );
+  }
 })();
