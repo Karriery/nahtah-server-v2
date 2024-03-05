@@ -11,7 +11,6 @@ module.exports = {
           res.status(201).json(newsletter);
         }
       });
-      res.status(201).json(newsletter);
     } catch (error) {
       console.error("Error creating newsletter:", error);
       res.status(500).json({ error: "Internal server error" });
