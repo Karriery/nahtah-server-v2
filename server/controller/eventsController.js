@@ -182,7 +182,6 @@ module.exports = {
         const notificationData = {
           title: "تم قبول الحدث",
           text: "تم قبول الحدث من قبل العامل",
-          redirection: req.params.id,
           client: req.body.client,
           time: new Date().toISOString(),
         };
@@ -197,7 +196,6 @@ module.exports = {
         const notificationData = {
           title: "تم رفض الحدث",
           text: "تم رفض الحدث من قبل العامل",
-          redirection: req.params.id,
           client: req.body.client,
           time: new Date().toISOString(),
         };
@@ -215,7 +213,6 @@ module.exports = {
         const notificationData = {
           title: "Event started",
           text: "The event has started",
-          redirection: req.params.id,
           client: req.body.client,
           time: new Date().toISOString(),
         };
@@ -232,7 +229,6 @@ module.exports = {
         const notificationData = {
           title: "Event finished",
           text: "The event has finished",
-          redirection: req.params.id,
           client: req.body.client,
           time: new Date().toISOString(),
         };
@@ -249,7 +245,6 @@ module.exports = {
         const notificationData = {
           title: "Event finished",
           text: "The event has finished",
-          redirection: req.params.id,
           client: req.body.client,
           time: new Date().toISOString(),
         };
