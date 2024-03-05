@@ -131,15 +131,6 @@ module.exports = {
     }
   },
 
-  chrone(date, minutesBeforeDate, callback) {
-    const targetDateTime = new Date(date);
-    const fifteenMinutesBefore = new Date(
-      targetDateTime.getTime() - minutesBeforeDate * 60000
-    );
-    const job = schedule.scheduleJob(fifteenMinutesBefore, callback);
-    console.log("Job scheduled to run at:", fifteenMinutesBefore);
-  },
-
   async createWithUser(req, res, next) {
     try {
       var sameDayEvents = await EventService.getbyToday(req.body.start);
@@ -189,6 +180,8 @@ module.exports = {
       const { status, client } = req.body;
       const { _id } = req.params;
       var Event = await EventService.updateStatus(_id, status);
+      console.log(Event);
+      console.log(status, client, _id);
       if (req.body.status === true) {
         const notificationData = {
           title: "تم قبول الحدث",
@@ -220,7 +213,7 @@ module.exports = {
           });
       }
 
-      this.chrone(Event.start, 15, () => {
+      chrone(Event.start, 15, () => {
         const notificationData = {
           title: "Event started",
           text: "The event has started",
@@ -236,7 +229,7 @@ module.exports = {
             console.error("Error saving notification:", error);
           });
       });
-      this.chrone(Event.start, 60, () => {
+      chrone(Event.start, 60, () => {
         const notificationData = {
           title: "Event finished",
           text: "The event has finished",
@@ -252,7 +245,7 @@ module.exports = {
             console.error("Error saving notification:", error);
           });
       });
-      this.chrone(Event.start, -30, () => {
+      chrone(Event.start, -30, () => {
         const notificationData = {
           title: "Event finished",
           text: "The event has finished",
@@ -271,7 +264,17 @@ module.exports = {
 
       res.send({ msg: "updated" });
     } catch (next) {
+      console.log(next);
       res.status(401).json(next);
     }
   },
 };
+
+function chrone(date, minutesBeforeDate, callback) {
+  const targetDateTime = new Date(date);
+  const fifteenMinutesBefore = new Date(
+    targetDateTime.getTime() - minutesBeforeDate * 60000
+  );
+  const job = schedule.scheduleJob(fifteenMinutesBefore, callback);
+  console.log("Job scheduled to run at:", fifteenMinutesBefore);
+}
