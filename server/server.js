@@ -85,7 +85,7 @@ app.post("/registerPushToken", jsonParser, async (req, res) => {
 });
 
 app.post("/send", async (req, res) => {
-  const { userId, title, body, data } = req.body;
+  const { userId, title, body, channelId } = req.body;
   const token = await firebaseConfig.getToken(userId);
   // Check if token is valid
   if (!Expo.isExpoPushToken(token)) {
@@ -97,7 +97,7 @@ app.post("/send", async (req, res) => {
       sound: "default",
       title: title || "Event",
       body: body || "Event",
-      data: data || "",
+      channelId: channelId || "default",
     },
   ];
 
