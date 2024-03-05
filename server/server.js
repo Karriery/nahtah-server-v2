@@ -93,13 +93,18 @@ app.post("/send", async (req, res) => {
     console.log("Invalid token", token);
     return res.status(400).send("Invalid token");
   }
+
+  const { screen } = data;
+
   const messages = [
     {
       to: token,
       sound: "default",
       title: title || "Event",
       body: body || "Event",
-      data: data || {},
+      data: {
+        screen: screen || "",
+      },
     },
   ];
 
