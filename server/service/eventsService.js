@@ -28,6 +28,11 @@ module.exports = new (class EventService {
   checkIf(userId) {
     return Event.find({ userId });
   }
+
+  updateStatus(_id, status) {
+    return Event.findOneAndUpdate({ _id }, { status: status });
+  }
+
   findbyClient(client) {
     return Event.find({ client }).populate("client");
   }
@@ -41,16 +46,5 @@ module.exports = new (class EventService {
   }
   deleteAllEvents() {
     return Event.deleteMany({});
-  }
-  updateStatus(_id, status, client) {
-    return Event.findOneAndUpdate(
-      {
-        _id,
-      },
-      {
-        status,
-        client,
-      }
-    );
   }
 })();

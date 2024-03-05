@@ -174,10 +174,20 @@ module.exports = {
       res.status(500).send("Internal Server Error");
     }
   },
+  async updateStatus(req, res, next) {
+    try {
+      const { _id, status, client } = req.body;
+      var Event = await EventService.updateStatus(_id, status, client);
+      res.send({ msg: "updated" });
+    } catch (next) {
+      res.status(401).json(next);
+    }
+  },
 
   async accept(req, res, next) {
     try {
-      var Event = await EventService.updateStatus(req.params.id, req.body);
+      const { _id, status, client } = req.body;
+      var Event = await EventService.updateStatus(_id, status);
       if (req.body.status === true) {
         const notificationData = {
           title: "تم قبول الحدث",
