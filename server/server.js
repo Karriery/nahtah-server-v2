@@ -97,7 +97,7 @@ app.post("/send", async (req, res) => {
       sound: "default",
       title: title || "Event",
       body: body || "Event",
-      data: data || {},
+      data: data || "",
     },
   ];
 
