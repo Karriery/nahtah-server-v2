@@ -192,6 +192,16 @@ module.exports = {
     }
   },
 
+  async test(req, res, next) {
+    await SendNotification(
+      req.params.client,
+      "Event starting",
+      "The event is starting soon",
+      "default"
+    );
+    res.send({ msg: "updated" });
+  },
+
   async accept(req, res, next) {
     try {
       const { status, client } = req.body;
@@ -226,35 +236,6 @@ module.exports = {
       res.status(401).json(next);
     }
   },
-  async SendNotification(client, title, body, channelId) {
-    const tokens = await firebaseConfig.GetTokens(client);
-
-    const messages = tokens.map((token) => ({
-      to: token,
-      sound: "default",
-      title: title || "Event",
-      body: body || "Event",
-      channelId: channelId || "default",
-    }));
-    await NotificationService.create({
-      title: title,
-      text: body,
-      client: client,
-      time: new Date().toISOString(),
-    });
-
-    try {
-      const chunks = expo.chunkPushNotifications(messages);
-
-      for (let chunk of chunks) {
-        const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-      }
-      return "Notification sent";
-    } catch (error) {
-      console.error("Error sending push notification:", error);
-      return "Error sending push notification";
-    }
-  },
 };
 
 function chrone(date, minutesBeforeDate, callback) {
@@ -264,3 +245,33 @@ function chrone(date, minutesBeforeDate, callback) {
   );
   const job = schedule.scheduleJob(fifteenMinutesBefore, callback);
 }
+
+var SendNotification = async (client, title, body, channelId) => {
+  const tokens = await firebaseConfig.GetTokens(client);
+
+  const messages = tokens.map((token) => ({
+    to: token,
+    sound: "default",
+    title: title || "Event",
+    body: body || "Event",
+    channelId: channelId || "default",
+  }));
+  await NotificationService.create({
+    title: title,
+    text: body,
+    client: client,
+    time: new Date().toISOString(),
+  });
+
+  try {
+    const chunks = expo.chunkPushNotifications(messages);
+
+    for (let chunk of chunks) {
+      const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+    }
+    return "Notification sent";
+  } catch (error) {
+    console.error("Error sending push notification:", error);
+    return "Error sending push notification";
+  }
+};
