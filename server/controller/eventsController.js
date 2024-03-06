@@ -1,6 +1,10 @@
 const EventService = require("../service/eventsService.js");
 const NotificationService = require("../service/notificationService.js");
 const schedule = require("node-schedule");
+const firebaseConfig = require("../service/FirBaseService.js");
+const { Expo } = require("expo-server-sdk");
+const expo = new Expo();
+
 // const { initializeApp } = require("firebase/app");
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -183,89 +187,62 @@ module.exports = {
       const { status, client } = req.body;
       const { _id } = req.params;
       var Event = await EventService.updateStatus(_id, status);
-      if (req.body.status === true) {
-        const notificationData = {
-          title: "تم قبول الحدث",
-          text: "تم قبول الحدث من قبل العامل",
-          client: client,
-          time: new Date().toISOString(),
-        };
-        NotificationService.create(notificationData)
-          .then((notification) => {
-            req.io.emit("newNOTIF", notification);
-          })
-          .catch((error) => {
-            console.error("Error saving notification:", error);
-          });
-      } else {
-        const notificationData = {
-          title: "تم رفض الحدث",
-          text: "تم رفض الحدث من قبل العامل",
-          client: client,
-          time: new Date().toISOString(),
-        };
-
-        NotificationService.create(notificationData)
-          .then((notification) => {
-            req.io.emit("newNOTIF", notification);
-          })
-          .catch((error) => {
-            console.error("Error saving notification:", error);
-          });
-      }
-
-      chrone(Event.start, 15, () => {
-        const notificationData = {
-          title: "Event started",
-          text: "The event has started",
-          client: client,
-          time: new Date().toISOString(),
-        };
-        // save the notification to the database
-        NotificationService.create(notificationData)
-          .then((notification) => {
-            req.io.emit("newNOTIF", notification);
-          })
-          .catch((error) => {
-            console.error("Error saving notification:", error);
-          });
+      chrone(Event.start, 15, async () => {
+        await SendNotification(
+          client,
+          "Event starting",
+          "The event is starting soon",
+          "default"
+        );
       });
-      chrone(Event.start, 60, () => {
-        const notificationData = {
-          title: "Event finished",
-          text: "The event has finished",
-          client: client,
-          time: new Date().toISOString(),
-        };
-        // save the notification to the database
-        NotificationService.create(notificationData)
-          .then((notification) => {
-            req.io.emit("newNOTIF", notification);
-          })
-          .catch((error) => {
-            console.error("Error saving notification:", error);
-          });
+      chrone(Event.start, 60, async () => {
+        await SendNotification(
+          client,
+          "Event starting",
+          "The event is starting soon",
+          "default"
+        );
       });
-      chrone(Event.start, -30, () => {
-        const notificationData = {
-          title: "Event finished",
-          text: "The event has finished",
-          client: client,
-          time: new Date().toISOString(),
-        };
-        // save the notification to the database
-        NotificationService.create(notificationData)
-          .then((notification) => {
-            req.io.emit("newNOTIF", notification);
-          })
-          .catch((error) => {
-            console.error("Error saving notification:", error);
-          });
+      chrone(Event.start, -30, async () => {
+        await SendNotification(
+          client,
+          "Event finished",
+          "The event has finished",
+          "default"
+        );
       });
-
       res.send({ msg: "updated" });
     } catch (next) {
       res.status(401).json(next);
+    }
+  },
+  async SendNotification(client, title, body, channelId) {
+    const tokens = await firebaseConfig.GetTokens(client);
+
+    const messages = tokens.map((token) => ({
+      to: token,
+      sound: "default",
+      title: title || "Event",
+      body: body || "Event",
+      channelId: channelId || "default",
+    }));
+    await NotificationService.create({
+      title: title,
+      text: body,
+      client: client,
+      time: new Date().toISOString(),
+    });
+
+    try {
+      const chunks = expo.chunkPushNotifications(messages);
+
+      for (let chunk of chunks) {
+        const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+      }
+      return "Notification sent";
+    } catch (error) {
+      console.error("Error sending push notification:", error);
+      return "Error sending push notification";
     }
   },
 };
