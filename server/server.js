@@ -81,6 +81,7 @@ app.get("/", (req, res) => {
 app.post("/registerPushToken", jsonParser, async (req, res) => {
   const { token, userId } = req.body;
   await firebaseConfig.saveToken(userId, token);
+  req.io.emit("newToken", { token, userId });
   res.status(200).send("Token saved");
 });
 
