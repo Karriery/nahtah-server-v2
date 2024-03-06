@@ -84,8 +84,13 @@ app.post("/registerPushToken", jsonParser, async (req, res) => {
   res.status(200).send("Token saved");
 });
 app.post("/send", async (req, res) => {
-  const { userId, title, body, channelId } = req.body;
-  const tokens = await firebaseConfig.getToken(userId);
+  const { title, body, channelId } = req.body;
+  const usersData = await firebaseConfig.GetUsers(); // No need to pass userId here
+
+  // Extract tokens from the user data
+  const tokens = Object.values(usersData)
+    .map((userData) => userData.tokens)
+    .flat();
 
   const messages = tokens.map((token) => ({
     to: token,
