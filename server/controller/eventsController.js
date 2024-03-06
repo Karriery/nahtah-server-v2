@@ -172,6 +172,16 @@ module.exports = {
       res.status(500).send("Internal Server Error");
     }
   },
+  async getEventStart(req, res, next) {
+    try {
+      const { start } = req.body;
+      const events = await EventService.getEventStart(start);
+      res.send(events);
+    } catch (error) {
+      console.error("Error fetching events by start:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
   async updateStatus(req, res, next) {
     try {
       const { _id, status, client } = req.body;
