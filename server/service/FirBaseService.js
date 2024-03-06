@@ -36,8 +36,6 @@ const GetUsers = async () => {
   const snapshot = await get(usersRef);
   if (snapshot.exists()) {
     return snapshot.val();
-  } else {
-    console.log("No data available");
   }
 };
 const GetTokens = async (userId) => {
