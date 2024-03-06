@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const eventController = require("../controller/eventsController.js");
-const { verifyAccessToken } = require("../jwt_helpers.js");
 
 router.post("/create", eventController.create);
 router.get("/", eventController.getEvent);
