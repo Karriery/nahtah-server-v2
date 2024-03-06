@@ -32,10 +32,13 @@ const saveToken = async (userId, token) => {
 };
 
 const GetUsers = async () => {
-  const userDataRef = ref(db, `users`);
-  const snapshot = await get(userDataRef);
-  const userData = snapshot.val() ?? {};
-  return userData.tokens || [];
+  const usersRef = ref(db, "users");
+  const snapshot = await get(usersRef);
+  if (snapshot.exists()) {
+    return snapshot.val();
+  } else {
+    console.log("No data available");
+  }
 };
 
 const deleteToken = async (userId, tokenToDelete) => {
