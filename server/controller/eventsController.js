@@ -157,7 +157,12 @@ module.exports = {
     try {
       const { userId, start } = req.body;
       const events = await EventService.getEventByUserIdAndStart(userId, start);
-      res.send(events);
+
+      const startTimes = events.map((event) => {
+        return event.start.split(" ")[1];
+      });
+
+      res.send(start ? startTimes : []);
     } catch (error) {
       console.error("Error fetching events by userId:", error);
       res.status(500).send("Internal Server Error");
