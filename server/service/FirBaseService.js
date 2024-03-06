@@ -40,6 +40,12 @@ const GetUsers = async () => {
     console.log("No data available");
   }
 };
+const GetTokens = async (userId) => {
+  const userDataRef = ref(db, `users/${userId}`);
+  const snapshot = await get(userDataRef);
+  const userData = snapshot.val() ?? {};
+  return userData.tokens ?? [];
+};
 
 const deleteToken = async (userId, tokenToDelete) => {
   const userDataRef = ref(db, `users/${userId}`);
@@ -60,4 +66,5 @@ module.exports = {
   saveToken,
   GetUsers,
   deleteToken,
+  GetTokens,
 };
