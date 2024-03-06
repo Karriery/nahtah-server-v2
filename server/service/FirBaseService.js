@@ -28,7 +28,7 @@ const saveToken = async (userId, token) => {
   await set(userDataRef, { ...userData, tokens });
 };
 
-const getToken = async (userId) => {
+const GetUsers = async (userId) => {
   const userDataRef = ref(db, `users/${userId}`);
   const snapshot = await get(userDataRef);
   const userData = snapshot.val() ?? {};
@@ -55,6 +55,6 @@ const deleteToken = async (userId, tokenToDelete) => {
 module.exports = {
   app,
   saveToken,
-  getToken,
+  GetUsers,
   deleteToken,
 };
