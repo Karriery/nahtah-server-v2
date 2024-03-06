@@ -32,7 +32,22 @@ module.exports = {
   async getAllStores(req, res) {
     try {
       const stores = await StoreService.getAll();
-      res.status(200).json(stores);
+      const timeRanges = stores.map((store) => {
+        const timeOpen = new Date(`2024-01-01T${store.timeOpen}`);
+        const timeClose = new Date(`2024-01-01T${store.timeClose}`);
+        const timeRanges = [];
+        let currentTime = new Date(timeOpen);
+        while (currentTime < timeClose) {
+          const hour = currentTime.getHours().toString().padStart(2, "0");
+          const minute = currentTime.getMinutes().toString().padStart(2, "0");
+          timeRanges.push(`${hour}:${minute}`);
+          currentTime.setMinutes(currentTime.getMinutes() + 30);
+        }
+        return timeRanges;
+      });
+      // Flatten the array of arrays
+      const flattenedTimeRanges = timeRanges.flat();
+      res.status(200).json(flattenedTimeRanges);
     } catch (error) {
       console.error("Error fetching stores:", error);
       res.status(500).json({ error: "Internal server error" });
