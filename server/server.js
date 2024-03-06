@@ -87,12 +87,6 @@ app.post("/send", async (req, res) => {
   const { userId, title, body, channelId } = req.body;
   const tokens = await firebaseConfig.getToken(userId);
 
-  // Check if any tokens are invalid
-  const invalidTokens = tokens.filter((token) => !Expo.isExpoPushToken(token));
-  if (invalidTokens.length > 0) {
-    return res.status(400).send("Invalid token");
-  }
-
   const messages = tokens.map((token) => ({
     to: token,
     sound: "default",

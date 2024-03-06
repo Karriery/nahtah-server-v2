@@ -22,10 +22,13 @@ const saveToken = async (userId, token) => {
   const userData = snapshot.val() ?? {};
 
   // Check if the user already has tokens array, if not create one
-  const tokens = userData.tokens ? [...userData.tokens, token] : [token];
+  const tokens = userData.tokens ? userData.tokens : [];
 
-  // Update the tokens array in the database
-  await set(userDataRef, { ...userData, tokens });
+  // Check if the token already exists in the tokens array
+  if (!tokens.includes(token)) {
+    // Update the tokens array in the database
+    await set(userDataRef, { ...userData, tokens: [...tokens, token] });
+  }
 };
 
 const GetUsers = async (userId) => {
@@ -41,8 +44,8 @@ const deleteToken = async (userId, tokenToDelete) => {
   const snapshot = await get(userDataRef);
   const userData = snapshot.val() ?? {};
 
-  // If user has tokens, filter out the token to delete
-  if (userData.tokens) {
+  // If user has tokens and the token to delete exists, remove it
+  if (userData.tokens && userData.tokens.includes(tokenToDelete)) {
     const updatedTokens = userData.tokens.filter(
       (token) => token !== tokenToDelete
     );
