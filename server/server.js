@@ -83,23 +83,23 @@ app.post("/registerPushToken", jsonParser, async (req, res) => {
   await firebaseConfig.saveToken(userId, token);
   res.status(200).send("Token saved");
 });
-
 app.post("/send", async (req, res) => {
   const { userId, title, body, channelId } = req.body;
-  const token = await firebaseConfig.getToken(userId);
-  // Check if token is valid
-  if (!Expo.isExpoPushToken(token)) {
+  const tokens = await firebaseConfig.getToken(userId);
+
+  // Check if any tokens are invalid
+  const invalidTokens = tokens.filter((token) => !Expo.isExpoPushToken(token));
+  if (invalidTokens.length > 0) {
     return res.status(400).send("Invalid token");
   }
-  const messages = [
-    {
-      to: token,
-      sound: "default",
-      title: title || "Event",
-      body: body || "Event",
-      channelId: channelId || "default",
-    },
-  ];
+
+  const messages = tokens.map((token) => ({
+    to: token,
+    sound: "default",
+    title: title || "Event",
+    body: body || "Event",
+    channelId: channelId || "default",
+  }));
 
   try {
     const chunks = expo.chunkPushNotifications(messages);
@@ -116,8 +116,8 @@ app.post("/send", async (req, res) => {
 });
 
 app.post("/deleteToken", jsonParser, async (req, res) => {
-  const { userId } = req.body;
-  await firebaseConfig.deleteToken(userId);
+  const { userId, token } = req.body;
+  await firebaseConfig.deleteToken(userId, token);
   res.status(200).send("Token deleted");
 });
 
@@ -125,7 +125,6 @@ app.get("/usersConnected", async (req, res) => {
   const users = await firebaseConfig.GetUsers();
   res.status(200).json(users);
 });
-
 server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });

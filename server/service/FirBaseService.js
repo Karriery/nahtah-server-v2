@@ -16,26 +16,40 @@ const app = initializeApp(firebaseConfig);
 
 const db = getDatabase(app);
 const dbRef = ref(db);
-
 const saveToken = async (userId, token) => {
-  const values = (await get(child(dbRef, `users/${userId}`))).val() ?? {};
-  const payload = { ...values, token };
-  set(ref(db, `users/${userId}`), payload);
+  const userDataRef = ref(db, `users/${userId}`);
+  const snapshot = await get(userDataRef);
+  const userData = snapshot.val() ?? {};
+
+  // Check if the user already has tokens array, if not create one
+  const tokens = userData.tokens ? [...userData.tokens, token] : [token];
+
+  // Update the tokens array in the database
+  await set(userDataRef, { ...userData, tokens });
 };
 
 const getToken = async (userId) => {
-  const values = (await get(child(dbRef, `users/${userId}`))).val() ?? {};
-  const { token } = values;
-  return token;
+  const userDataRef = ref(db, `users/${userId}`);
+  const snapshot = await get(userDataRef);
+  const userData = snapshot.val() ?? {};
+
+  return userData.tokens || [];
 };
 
-const GetUsers = async () => {
-  const values = (await get(child(dbRef, `users`))).val() ?? {};
-  return values;
-};
+const deleteToken = async (userId, tokenToDelete) => {
+  const userDataRef = ref(db, `users/${userId}`);
+  const snapshot = await get(userDataRef);
+  const userData = snapshot.val() ?? {};
 
-const deleteToken = async (userId) => {
-  set(ref(db, `users/${userId}`), null);
+  // If user has tokens, filter out the token to delete
+  if (userData.tokens) {
+    const updatedTokens = userData.tokens.filter(
+      (token) => token !== tokenToDelete
+    );
+
+    // Update the tokens array in the database
+    await set(userDataRef, { ...userData, tokens: updatedTokens });
+  }
 };
 
 module.exports = {
@@ -43,5 +57,4 @@ module.exports = {
   saveToken,
   getToken,
   deleteToken,
-  GetUsers,
 };
