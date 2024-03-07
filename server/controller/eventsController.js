@@ -72,10 +72,10 @@ module.exports = {
           // If status is the same, sort by event date
           const dateA = new Date(a.start.replace(" ", "T"));
           const dateB = new Date(b.start.replace(" ", "T"));
-          if (dateA.getTime() !== dateB.getTime()) {
-            return dateA - dateB;
+          const dateComparison = dateA - dateB;
+          if (dateComparison !== 0) {
+            return dateComparison;
           }
-
           // If event dates are the same, sort by start time
           const timeA = dateA.getHours() * 60 + dateA.getMinutes();
           const timeB = dateB.getHours() * 60 + dateB.getMinutes();
