@@ -41,9 +41,39 @@ module.exports = {
   },
   async getEventByClient(req, res, next) {
     try {
-      var Event = await EventService.findbyClient(req.params.id);
-      if (Event) {
-        return res.send(Event); // Return the response here
+      var events = await EventService.findbyClient(req.params.id);
+      if (events && events.length > 0) {
+        const sortedEvents = events.sort((a, b) => {
+          // Custom sorting logic
+          const getStatusValue = (event) => {
+            if (event.status === null) {
+              return 1;
+            } else if (
+              event.status &&
+              new Date() < new Date(event.end).getTime() + 60 * 60 * 1000
+            ) {
+              return 2;
+            } else if (
+              event.status &&
+              new Date() > new Date(event.end).getTime() + 60 * 60 * 1000
+            ) {
+              return 3;
+            } else {
+              return 4;
+            }
+          };
+          // Sort by status first
+          const statusComparison = getStatusValue(a) - getStatusValue(b);
+          if (statusComparison !== 0) {
+            return statusComparison;
+          }
+
+          // If status is the same, sort by start date descending
+          const dateA = new Date(a.start.replace(" ", "T"));
+          const dateB = new Date(b.start.replace(" ", "T"));
+          return dateB - dateA;
+        });
+        res.send(sortedEvents);
       } else {
         return res.status(404).send("Event not found");
       }
