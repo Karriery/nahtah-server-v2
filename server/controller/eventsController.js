@@ -73,7 +73,7 @@ module.exports = {
           const dateA = new Date(a.start.replace(" ", "T"));
           const dateB = new Date(b.start.replace(" ", "T"));
           if (dateA.getTime() !== dateB.getTime()) {
-            return dateB - dateA;
+            return dateA - dateB;
           }
 
           // If event dates are the same, sort by start time
