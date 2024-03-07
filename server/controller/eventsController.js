@@ -62,16 +62,24 @@ module.exports = {
               return 4;
             }
           };
+
           // Sort by status first
           const statusComparison = getStatusValue(a) - getStatusValue(b);
           if (statusComparison !== 0) {
             return statusComparison;
           }
 
-          // If status is the same, sort by start date descending
+          // If status is the same, sort by event date
           const dateA = new Date(a.start.replace(" ", "T"));
           const dateB = new Date(b.start.replace(" ", "T"));
-          return dateB - dateA;
+          if (dateA.getTime() !== dateB.getTime()) {
+            return dateB - dateA;
+          }
+
+          // If event dates are the same, sort by start time
+          const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+          const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+          return timeB - timeA;
         });
         res.send(sortedEvents);
       } else {
