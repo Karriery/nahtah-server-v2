@@ -72,7 +72,7 @@ module.exports = {
           // If status is the same, sort by event date
           const dateA = new Date(a.start.replace(" ", "T"));
           const dateB = new Date(b.start.replace(" ", "T"));
-          const dateComparison = dateA - dateB;
+          const dateComparison = dateB - dateA;
           if (dateComparison !== 0) {
             return dateComparison;
           }
