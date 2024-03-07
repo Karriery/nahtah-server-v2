@@ -83,7 +83,7 @@ module.exports = {
         });
         res.send(sortedEvents);
       } else {
-        return res.status(404).send("Event not found");
+        return res.send({ message: "No events found" });
       }
     } catch (error) {
       console.error("Error fetching event:", error);
