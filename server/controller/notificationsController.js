@@ -2,8 +2,13 @@ const NotificationService = require("../service/notificationService");
 module.exports = {
   async createNotification(req, res) {
     try {
+      debugger; // Set a breakpoint here
       const newNotification = await NotificationService.create(req.body);
-      req.io.emit("newNotification", newNotification);
+      req.io.emit("newNotification", newNotification, (err) => {
+        if (err) {
+          console.error("Error sending notification:", err);
+        }
+      });
       res.status(201).json(newNotification);
     } catch (error) {
       console.error("Error creating notification:", error);
