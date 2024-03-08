@@ -8,6 +8,7 @@ const io = socketIo(server, {
   cors: {
     origin: "*",
   },
+  pingTimeout: 30000 /* 30 seconds */,
 });
 
 const cors = require("cors");
