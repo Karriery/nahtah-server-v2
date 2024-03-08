@@ -11,9 +11,23 @@ module.exports = new (class EventService {
     return Event.findOne({ _id });
   }
   getByStatus(status) {
-    return Event.find({
+    const Events = Event.find({
       status: status,
     });
+    const sortedEvents = Events.sort((a, b) => {
+      // If status is the same, sort by event date
+      const dateA = new Date(a.start.replace(" ", "T"));
+      const dateB = new Date(b.start.replace(" ", "T"));
+      const dateComparison = dateB - dateA;
+      if (dateComparison !== 0) {
+        return dateComparison;
+      }
+      // If event dates are the same, sort by start time
+      const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+      const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+      return timeB - timeA;
+    });
+    return sortedEvents;
   }
   getEventByUser(userId) {
     return Event.find({ userId: userId });
