@@ -45,9 +45,11 @@ module.exports = new (class EventService {
     return Event.find({ userId: userId, start: { $regex: dateRegex } });
   }
   getEventsInRange(startRange, endRange) {
+    const adjustedEndRange = new Date(endRange);
+    adjustedEndRange.setDate(adjustedEndRange.getDate() + 1);
     return Event.find({
       start: { $gte: startRange },
-      end: { $lte: endRange },
+      end: { $lte: adjustedEndRange },
     });
   }
 
