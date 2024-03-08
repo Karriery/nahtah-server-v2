@@ -12,8 +12,20 @@ module.exports = {
   },
   async getAllNewsletters(req, res) {
     try {
-      const newsletters = await NewsletterService.getAll();
-      res.status(200).json(newsletters);
+      let { page, limit } = req.query;
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
+
+      const allNewsletters = await NewsletterService.getAll();
+      const skip = (page - 1) * limit;
+      const paginatedNewsletters = allNewsletters.slice(skip, skip + limit);
+      const totalNewsletters = allNewsletters.length;
+      const totalPages = Math.ceil(totalNewsletters / limit);
+
+      res.status(200).json({
+        newsletters: paginatedNewsletters,
+        totalPages,
+      });
     } catch (error) {
       console.error("Error fetching newsletters:", error);
       res.status(500).json({ error: "Internal server error" });
