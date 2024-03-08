@@ -53,10 +53,13 @@ module.exports = new (class EventService {
         start: { $gte: startRange, $lte: updatedEnd },
       }).exec();
 
-      const SortByDate = (a, b) => {
-        return a.start - b.start;
+      const sortByDate = (a, b) => {
+        const dateA = new Date(a.start);
+        const dateB = new Date(b.start);
+        return dateA - dateB;
       };
-      filteredEvents.sort(SortByDate);
+
+      filteredEvents.sort(sortByDate);
 
       return filteredEvents;
     } catch (error) {
