@@ -14,7 +14,7 @@ module.exports = {
     try {
       let { page, limit } = req.query;
       page = parseInt(page) || 1;
-      limit = parseInt(limit) || 8;
+      limit = parseInt(limit) || 9;
 
       const allNewsletters = await NewsletterService.getAll();
       const skip = (page - 1) * limit;
