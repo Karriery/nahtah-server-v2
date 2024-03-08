@@ -19,8 +19,54 @@ module.exports = {
   async getNotificationsByClient(req, res) {
     try {
       const client = req.params.client;
-      const notifications = await NotificationService.findbyClient(client);
-      res.status(200).json(notifications);
+      let { page, limit } = req.query;
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 5;
+
+      // Retrieve all notifications for the client
+      const allNotifications = await NotificationService.findbyClient(
+        client
+      ).exec();
+
+      // Sort notifications by 'vue' property (false first)
+      const sortedNotifications = allNotifications.sort((a, b) => {
+        if (a.vue === b.vue) {
+          return 0;
+        } else if (a.vue === false) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+
+      // Paginate the sorted notifications
+      const skip = (page - 1) * limit;
+      const paginatedNotifications = sortedNotifications.slice(
+        skip,
+        skip + limit
+      );
+
+      // Count total notifications for the client
+      const totalNotifications = sortedNotifications.length;
+
+      // Calculate total pages based on limit
+      const totalPages = Math.ceil(totalNotifications / limit);
+
+      let uncheckedNotifications = 0;
+
+      // Count unchecked notifications across all pages
+      for (const notification of sortedNotifications) {
+        if (!notification.vue) {
+          uncheckedNotifications++;
+        }
+      }
+
+      res.status(200).json({
+        sortedEvents: paginatedNotifications,
+        totalPages,
+        currentPage: page,
+        uncheckedNotifications,
+      });
     } catch (error) {
       console.error("Error fetching notifications:", error);
       res.status(500).json({ error: "Internal server error" });
