@@ -44,13 +44,19 @@ module.exports = new (class EventService {
     const dateRegex = new RegExp(`^${start}`);
     return Event.find({ userId: userId, start: { $regex: dateRegex } });
   }
-  getEventsInRange(startRange, endRange) {
-    const adjustedEndRange = new Date(endRange);
-    adjustedEndRange.setDate(adjustedEndRange.getDate() + 1);
-    return Event.find({
-      start: { $gte: startRange },
-      end: { $lte: adjustedEndRange },
-    });
+  async getEventsInRange(startRange, endRange) {
+    try {
+      const Ennnnd = new Date(endRange);
+      Ennnnd.setDate(Ennnnd.getDate() + 1);
+      const updatedEnd = Ennnnd.toISOString().split("T")[0];
+      const filteredEvents = await Event.find({
+        start: { $gte: startRange, $lte: updatedEnd },
+      }).exec();
+
+      return filteredEvents;
+    } catch (error) {
+      throw error;
+    }
   }
 
   deleteAllEvents() {
