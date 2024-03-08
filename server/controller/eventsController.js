@@ -210,13 +210,13 @@ module.exports = {
       res.status(500).send("Internal Server Error");
     }
   },
-  async getEventStart(req, res, next) {
+  async getEventsInRange(req, res, next) {
     try {
-      const { start } = req.body;
-      const events = await EventService.getEventStart(start);
+      const { startRange, endRange } = req.body;
+      const events = await EventService.getEventsInRange(startRange, endRange);
       res.send(events);
     } catch (error) {
-      console.error("Error fetching events by start:", error);
+      console.error("Error fetching events within range:", error);
       res.status(500).send("Internal Server Error");
     }
   },

@@ -44,10 +44,13 @@ module.exports = new (class EventService {
     const dateRegex = new RegExp(`^${start}`);
     return Event.find({ userId: userId, start: { $regex: dateRegex } });
   }
-  getEventStart(start) {
-    const dateRegex = new RegExp(`^${start}`);
-    return Event.find({ start: { $regex: dateRegex } });
+  getEventsInRange(startRange, endRange) {
+    return Event.find({
+      start: { $gte: startRange },
+      end: { $lte: endRange },
+    });
   }
+
   deleteAllEvents() {
     return Event.deleteMany({});
   }

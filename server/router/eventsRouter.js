@@ -6,7 +6,7 @@ router.get("/", eventController.getEvent);
 router.get("/id/:id", eventController.getEventById);
 router.get("/client/:id", eventController.getEventByClient);
 router.post("/today", eventController.getEventByUserIdAndStart);
-router.post("/GetByToday", eventController.getEventStart);
+router.post("/GetByRange", eventController.getEventsInRange);
 router.put("/:id", eventController.updated);
 router.post("/status/", eventController.getEventByStatus);
 router.post("/review", eventController.getEventByUser);
