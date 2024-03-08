@@ -21,7 +21,7 @@ module.exports = {
       const client = req.params.client;
       let { page, limit } = req.query;
       page = parseInt(page) || 1;
-      limit = parseInt(limit) || 5;
+      limit = parseInt(limit) || 7;
 
       // Retrieve all notifications for the client
       const allNotifications = await NotificationService.findbyClient(
