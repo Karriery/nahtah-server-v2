@@ -2,7 +2,7 @@ var Store = require("../model/Store.js");
 
 class StoreService {
   async findOne() {
-    return Store.findOne();
+    return Store.findOne({}, { timeOpen: 1, timeClose: 1 });
   }
   async create(data) {
     return Store.create(data);
