@@ -212,8 +212,14 @@ module.exports = {
   },
   async getEventsInRange(req, res, next) {
     try {
-      const { startRange, endRange } = req.body;
-      const events = await EventService.getEventsInRange(startRange, endRange);
+      const { startRange, endRange, startRangTime, endRangTime } = req.body;
+      const events = await EventService.getEventsInRange(
+        startRange,
+        endRange,
+        startRangTime,
+        endRangTime
+      );
+      console.log(req.body, "req.body");
       res.send(events);
     } catch (error) {
       console.error("Error fetching events within range:", error);
