@@ -219,7 +219,6 @@ module.exports = {
         startRangTime,
         endRangTime
       );
-      console.log(req.body, "req.body");
       res.send(events);
     } catch (error) {
       console.error("Error fetching events within range:", error);
