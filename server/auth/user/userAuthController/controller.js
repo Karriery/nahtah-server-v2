@@ -46,8 +46,15 @@ module.exports = {
       bcrypt.hash(req.body.password, 10, async (err, hash) => {
         var User = req.body;
         User.password = hash;
-        var a = await UserService.signup(User);
-        res.send({ msg: true });
+        var newUser = await UserService.signup(User);
+        var token = jwt.sign({ id: newUser._id }, "sa7fa leblebi");
+        var accessToken = jwt.sign({ id: newUser._id }, "halelews");
+        res.send({
+          msg: true,
+          token,
+          access_token: accessToken,
+          user: newUser,
+        });
       });
     } catch {
       res.send("get error ");
