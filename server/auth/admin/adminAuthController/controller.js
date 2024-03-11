@@ -41,6 +41,10 @@ module.exports = {
       if (!req.body.password || !req.body.username) {
         res.send({ msg: false });
       }
+      const admin = await adminService.getAdminbyEmail(req.body.email);
+      if (admin) {
+        res.send({ msg: "email already exist" });
+      }
       bcrypt.hash(req.body.password, 10, async (err, hash) => {
         var admin = req.body;
         admin.password = hash;

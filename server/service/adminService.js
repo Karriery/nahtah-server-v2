@@ -10,6 +10,9 @@ module.exports = new (class AdminService {
   getAdminByUsername(username) {
     return Admin.findOne({ username: username });
   }
+  getAdminbyEmail(email) {
+    return Admin.findOne({ email: email });
+  }
   getAllAdmin() {
     return Admin.find();
   }

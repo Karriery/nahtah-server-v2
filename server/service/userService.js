@@ -10,6 +10,9 @@ module.exports = new (class UserService {
   getUserByUsername(username) {
     return User.findOne({ username: username });
   }
+  getUserbyEmail(email) {
+    return User.findOne({ email: email });
+  }
   getAllUser() {
     return User.find();
   }
