@@ -46,21 +46,21 @@ module.exports = {
       const user = await UserService.getUserbyEmail(req.body.email);
       if (user) {
         res.send({ msg: "email already exist" });
-      }
-
-      bcrypt.hash(req.body.password, 10, async (err, hash) => {
-        var User = req.body;
-        User.password = hash;
-        var newUser = await UserService.signup(User);
-        var token = jwt.sign({ id: newUser._id }, "sa7fa leblebi");
-        var accessToken = jwt.sign({ id: newUser._id }, "halelews");
-        res.send({
-          msg: true,
-          token,
-          access_token: accessToken,
-          user: newUser,
+      } else {
+        bcrypt.hash(req.body.password, 10, async (err, hash) => {
+          var User = req.body;
+          User.password = hash;
+          var newUser = await UserService.signup(User);
+          var token = jwt.sign({ id: newUser._id }, "sa7fa leblebi");
+          var accessToken = jwt.sign({ id: newUser._id }, "halelews");
+          res.send({
+            msg: true,
+            token,
+            access_token: accessToken,
+            user: newUser,
+          });
         });
-      });
+      }
     } catch {
       res.send("get error ");
     }

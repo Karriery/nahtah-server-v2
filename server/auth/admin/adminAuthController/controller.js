@@ -44,13 +44,14 @@ module.exports = {
       const admin = await adminService.getAdminbyEmail(req.body.email);
       if (admin) {
         res.send({ msg: "email already exist" });
+      } else {
+        bcrypt.hash(req.body.password, 10, async (err, hash) => {
+          var admin = req.body;
+          admin.password = hash;
+          var a = await adminService.signup(admin);
+          res.send({ msg: true });
+        });
       }
-      bcrypt.hash(req.body.password, 10, async (err, hash) => {
-        var admin = req.body;
-        admin.password = hash;
-        var a = await adminService.signup(admin);
-        res.send({ msg: true });
-      });
     } catch {
       res.send("get error ");
     }
