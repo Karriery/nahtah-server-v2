@@ -58,7 +58,7 @@ module.exports = {
   },
   async login(req, res) {
     try {
-      var admin = await adminService.getAdminByUsername(req.body.username);
+      var admin = await adminService.getAdminbyEmail(req.body.email);
       if (admin) {
         bcrypt.compare(req.body.password, admin.password, (err, result) => {
           if (result) {

@@ -67,11 +67,11 @@ module.exports = {
   },
   async login(req, res) {
     try {
-      var Admin = await AdminService.getAdminByUsername(req.body.username);
+      var Admin = await AdminService.getAdminbyEmail(req.body.email);
       var User;
 
       if (!Admin) {
-        User = await UserService.getUserByUsername(req.body.username);
+        User = await UserService.getAdminbyEmail(req.body.email);
       }
 
       const user = Admin || User;
