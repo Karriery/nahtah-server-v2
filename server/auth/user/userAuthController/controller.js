@@ -68,36 +68,33 @@ module.exports = {
   async login(req, res) {
     try {
       var Admin = await AdminService.getAdminByUsername(req.body.username);
-      if (Admin) {
-        bcrypt.compare(req.body.password, Admin.password, (err, result) => {
+      var User;
+
+      if (!Admin) {
+        User = await UserService.getUserByUsername(req.body.username);
+      }
+
+      const user = Admin || User;
+
+      if (user) {
+        bcrypt.compare(req.body.password, user.password, (err, result) => {
           if (result) {
-            var token = jwt.sign({ id: Admin._id }, "sa7fa leblebi");
-            var access_token = jwt.sign({ id: Admin._id }, "halelews");
-            res.send({ token, access_token, user: Admin });
+            var token = jwt.sign({ id: user._id }, "sa7fa leblebi");
+            var access_token = jwt.sign({ id: user._id }, "halelews");
+            res.send({ token, access_token, user });
           } else {
             res.send({ msg: "wrong password" });
           }
         });
       } else {
-        var User = await UserService.getUserByUsername(req.body.username);
-        if (User) {
-          bcrypt.compare(req.body.password, User.password, (err, result) => {
-            if (result) {
-              var token = jwt.sign({ id: User._id }, "sa7fa leblebi");
-              var access_token = jwt.sign({ id: User._id }, "halelews");
-              res.send({ token, access_token, user: User });
-            } else {
-              res.send({ msg: "wrong password" });
-            }
-          });
-        } else {
-          res.send({ msg: "wrong User name" });
-        }
+        res.send({ msg: "wrong User name" });
       }
-    } catch {
-      res.send("get error ");
+    } catch (error) {
+      console.error("Error:", error);
+      res.send("Error during login");
     }
   },
+
   async verify(req, res) {
     try {
       if (!req.body.token) {
