@@ -71,7 +71,7 @@ module.exports = {
       var User;
 
       if (!Admin) {
-        User = await UserService.getAdminbyEmail(req.body.email);
+        User = await UserService.getUserbyEmail(req.body.email);
       }
 
       const user = Admin || User;
