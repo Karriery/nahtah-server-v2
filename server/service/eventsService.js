@@ -70,7 +70,9 @@ module.exports = new (class EventService {
       updatedEnd.setDate(updatedEnd.getDate() + 1); // Increment end date by 1 to include events on the end date
       const filteredEvents = await Event.find({
         start: { $gte: startRange, $lt: updatedEnd }, // Use $lt instead of $lte to exclude events on updatedEnd date
-      }).exec();
+      })
+        .populate("client")
+        .exec();
 
       const startRangTimeArray = startRangTime.split(":");
       const endRangTimeArray = endRangTime.split(":");
