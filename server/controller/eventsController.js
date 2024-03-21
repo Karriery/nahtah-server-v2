@@ -42,6 +42,9 @@ module.exports = {
   async getEventByClient(req, res, next) {
     try {
       var events = await EventService.findbyClient(req.params.id);
+      let { page, limit } = req.query;
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 7;
       if (events && events.length > 0) {
         const sortedEvents = events.sort((a, b) => {
           // Custom sorting logic
@@ -81,7 +84,17 @@ module.exports = {
           const timeB = dateB.getHours() * 60 + dateB.getMinutes();
           return timeB - timeA;
         });
-        res.send(sortedEvents);
+
+        const skip = (page - 1) * limit;
+        const paginatedEvents = sortedEvents.slice(skip, skip + limit);
+        const totalEvents = sortedEvents.length;
+        const totalPages = Math.ceil(totalEvents / limit);
+
+        res.send({
+          sortedEvents: paginatedEvents,
+          totalPages,
+          currentPage: page,
+        });
       } else {
         return res.send({ message: "No events found" });
       }
