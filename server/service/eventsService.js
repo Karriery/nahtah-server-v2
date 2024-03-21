@@ -12,7 +12,9 @@ module.exports = new (class EventService {
   }
   async getByStatus(status) {
     try {
-      const events = await Event.find({ status: status }).exec();
+      const events = await Event.find({ status: status })
+        .populate("client")
+        .exec();
       const sortedEvents = events.sort((a, b) => {
         // If status is the same, sort by event date
         const dateA = new Date(a.start.replace(" ", "T"));
