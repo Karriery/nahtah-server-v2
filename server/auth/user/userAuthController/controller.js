@@ -33,7 +33,6 @@ module.exports = {
       const totalUsers = Users.length;
       const totalPages = Math.ceil(totalUsers / limit);
       res.send({ Users: paginatedUsers, totalUsers, totalPages });
-      res.send({ Users, total, pages });
     } catch (next) {
       res.status(401).json(next);
     }
