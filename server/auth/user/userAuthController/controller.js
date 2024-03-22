@@ -31,8 +31,14 @@ module.exports = {
       const skip = (page - 1) * limit;
       const paginatedUsers = Users.slice(skip, skip + limit);
       const totalUsers = Users.length;
+      const TotalUsersInCurrentPage = paginatedUsers.length;
       const totalPages = Math.ceil(totalUsers / limit);
-      res.send({ Users: paginatedUsers, totalUsers, totalPages });
+      res.send({
+        Users: paginatedUsers,
+        totalUsers,
+        totalPages,
+        TotalUsersInCurrentPage,
+      });
     } catch (next) {
       res.status(401).json(next);
     }
