@@ -23,4 +23,7 @@ module.exports = new (class UserService {
   update(_id, data) {
     return User.findOneAndUpdate({ _id: _id }, data);
   }
+  filterBanned(data) {
+    return User.find({ banned: data });
+  }
 })();

@@ -7,5 +7,5 @@ router.post("/verify", userController.verify);
 router.get("/", userController.getUsers);
 router.delete("/:id", userController.delet);
 router.put("/:id", userController.update);
-
+router.post("/filterBanned", userController.filterBanned);
 module.exports = router;

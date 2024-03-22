@@ -21,6 +21,23 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+  async filterBanned(req, res, next) {
+    try {
+      var Users = await UserService.filterBanned(req.body.banned);
+      let { page, limit } = req.query;
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 7;
+
+      const skip = (page - 1) * limit;
+      const paginatedUsers = Users.slice(skip, skip + limit);
+      const totalUsers = Users.length;
+      const totalPages = Math.ceil(totalUsers / limit);
+      res.send({ Users: paginatedUsers, totalUsers, totalPages });
+      res.send({ Users, total, pages });
+    } catch (next) {
+      res.status(401).json(next);
+    }
+  },
   async update(req, res, next) {
     try {
       var Users = await UserService.update(req.params.id, req.body);
