@@ -132,13 +132,26 @@ module.exports = {
   },
   async getEventByStatus(req, res, next) {
     try {
-      var Event = await EventService.getByStatus(req.body.status);
-      res.send(Event);
-    } catch (next) {
-      res.status(401).json(next);
+      const events = await EventService.getByStatus(req.body.status);
+
+      // Get the current date
+      const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+
+      // Filter out events that have already occurred
+      const upcomingEvents = events.filter(
+        (event) => event.start.split(" ")[0] >= currentDate
+      );
+
+      // Send the filtered list of upcoming events
+      if (upcomingEvents.length > 0) {
+        res.send(upcomingEvents);
+      } else {
+        res.status(404).json({ message: "No upcoming events found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
     }
   },
-
   getEventByUser(req, res, next) {
     EventService.getEventByUser(req.body.userId)
       .then((events) => {
