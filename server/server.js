@@ -36,7 +36,7 @@ const expo = new Expo();
 
 const upload = multer({ storage });
 
-const PORT = process.env.PORT || 3637;
+const PORT = process.env.PORT || 3639;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/img", express.static(path.join(__dirname, "..", "uploads")));
