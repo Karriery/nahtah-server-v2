@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const db = mongoose.connect(
-  "mongodb://localhost/nahtahtest",
+  "mongodb://localhost/nahtaouta",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
