@@ -141,9 +141,8 @@ module.exports = {
       const upcomingEvents = events.filter(
         (event) => event.start.split(" ")[0] >= currentDate
       );
-
       // Send the filtered list of upcoming events
-      if (upcomingEvents.length > 0) {
+      if (upcomingEvents) {
         res.send(upcomingEvents);
       } else {
         res.status(404).json({ message: "No upcoming events found" });
