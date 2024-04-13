@@ -1,8 +1,9 @@
 var Event = require("../model/events.js");
 
 module.exports = new (class EventService {
-  create(data) {
-    return Event.create(data);
+  async create(data) {
+    const createdEvent = await Event.create(data);
+    return await Event.populate(createdEvent, { path: "client" });
   }
   get() {
     return Event.find().sort({ start: "desc" }).populate("client");
