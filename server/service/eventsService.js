@@ -65,46 +65,37 @@ module.exports = new (class EventService {
     return Event.find({ userId: userId, start: { $regex: dateRegex } });
   }
   async getEventsInRange(startRange, endRange, startRangTime, endRangTime) {
-    try {
-      const updatedEnd = new Date(endRange);
-      updatedEnd.setDate(updatedEnd.getDate() + 1); // Increment end date by 1 to include events on the end date
-      const filteredEvents = await Event.find({
-        start: { $gte: startRange, $lt: updatedEnd }, // Use $lt instead of $lte to exclude events on updatedEnd date
-      })
-        .populate("client")
-        .exec();
+    const AllEvents = await Event.find();
+    const eventsInRange = await AllEvents.filter((event) => {
+      const eventStartDate = new Date(event.start);
+      const eventEndDate = new Date(event.end);
+      const rangeStartDate = new Date(startRange);
+      const rangeEndDate = new Date(endRange);
+      rangeEndDate.setDate(rangeEndDate.getDate() + 1);
+      return eventStartDate >= rangeStartDate && eventEndDate <= rangeEndDate;
+    });
 
-      const startRangTimeArray = startRangTime.split(":");
-      const endRangTimeArray = endRangTime.split(":");
-
-      const startDateTime = new Date(startRange);
-      startDateTime.setHours(parseInt(startRangTimeArray[0], 10));
-      startDateTime.setMinutes(parseInt(startRangTimeArray[1], 10));
-
-      const endDateTime = new Date(startRange);
-      endDateTime.setHours(parseInt(endRangTimeArray[0], 10));
-      endDateTime.setMinutes(parseInt(endRangTimeArray[1], 10));
-
-      const filteredEventsByTime = filteredEvents.filter((event) => {
-        const eventDate = new Date(event.start);
-        const eventTime = eventDate.getHours() * 60 + eventDate.getMinutes();
-        return (
-          eventTime >=
-            startDateTime.getHours() * 60 + startDateTime.getMinutes() &&
-          eventTime <= endDateTime.getHours() * 60 + endDateTime.getMinutes()
-        );
-      });
-
-      const sortByDate = (a, b) => {
-        return new Date(a.start) - new Date(b.start); // Use a.start instead of b.start to sort in ascending order
-      };
-
-      const sortedEvents = filteredEventsByTime.sort(sortByDate);
-
-      return sortedEvents;
-    } catch (error) {
-      throw error;
-    }
+    const eventsInRangeTime = await eventsInRange.filter((event) => {
+      const eventStartTime = event.start.split(" ")[1];
+      const eventEndTime = event.end.split(" ")[1];
+      const rangeStartTime = startRangTime;
+      const rangeEndTime = endRangTime;
+      return eventStartTime >= rangeStartTime && eventEndTime <= rangeEndTime;
+    });
+    const sortedEvents = eventsInRangeTime.sort((a, b) => {
+      // If status is the same, sort by event date
+      const dateA = new Date(a.start.replace(" ", "T"));
+      const dateB = new Date(b.start.replace(" ", "T"));
+      const dateComparison = dateB - dateA;
+      if (dateComparison !== 0) {
+        return dateComparison;
+      }
+      // If event dates are the same, sort by start time
+      const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+      const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+      return timeB - timeA;
+    });
+    return sortedEvents;
   }
 
   deleteAllEvents() {
