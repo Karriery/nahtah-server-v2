@@ -66,7 +66,7 @@ module.exports = new (class EventService {
     return Event.find({ userId: userId, start: { $regex: dateRegex } });
   }
   async getEventsInRange(startRange, endRange, startRangTime, endRangTime) {
-    const AllEvents = await Event.find();
+    const AllEvents = await Event.find().populate("client");
     const eventsInRange = await AllEvents.filter((event) => {
       const eventStartDate = new Date(event.start);
       const eventEndDate = new Date(event.end);
