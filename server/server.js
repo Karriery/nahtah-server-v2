@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
     cb(null, req.params.id + "." + file.originalname.split(".").pop());
   },
 });
-const jsonParser = bodyParser.json();
+const jsonParser = bodyParser.json({ limit: "10mb" });
 const firebaseConfig = require("./service/FirBaseService.js");
 const { Expo } = require("expo-server-sdk");
 const expo = new Expo();
@@ -38,7 +38,7 @@ const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 const PORT = process.env.PORT || 3639;
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use("/img", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use(
