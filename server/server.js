@@ -34,7 +34,7 @@ const firebaseConfig = require("./service/FirBaseService.js");
 const { Expo } = require("expo-server-sdk");
 const expo = new Expo();
 
-const upload = multer({ storage });
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 const PORT = process.env.PORT || 3639;
 app.use(bodyParser.json());
