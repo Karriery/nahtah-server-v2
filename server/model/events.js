@@ -9,6 +9,7 @@ const EventSchema = new mongoose.Schema(
     end: String,
     userId: String,
     description: String,
+    barberImg: String,
     client: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "User",
