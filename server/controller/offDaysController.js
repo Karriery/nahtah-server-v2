@@ -51,6 +51,15 @@ module.exports = {
     }
   },
 
+  async getByDate(req, res) {
+    try {
+      const offDays = await OffDaysService.getByDate(req.body.date);
+      res.status(200).send(offDays);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  },
+
   async update(req, res) {
     try {
       const offDays = await OffDaysService.update(req.params.id, req.body);

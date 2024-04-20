@@ -16,6 +16,9 @@ class OffDaysService {
   async getByUserIdAndDate(userId, date) {
     return offDays.find({ userId: userId, date: date });
   }
+  async getByDate(date) {
+    return offDays.find({ date: date });
+  }
   async update(id, data) {
     return offDays.findByIdAndUpdate;
   }
