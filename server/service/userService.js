@@ -13,6 +13,9 @@ module.exports = new (class UserService {
   getUserbyEmail(email) {
     return User.findOne({ email: email });
   }
+  getByPhone(phone) {
+    return User.findOne({ phone: phone });
+  }
   getAllUser() {
     return User.find();
   }
