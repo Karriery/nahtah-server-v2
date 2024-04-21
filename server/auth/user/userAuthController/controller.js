@@ -23,7 +23,7 @@ module.exports = {
 
       const user = await UserService.getUserbyEmail(email);
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.send({ message: "User not found" });
       } else {
         const code = crypto.randomBytes(4).toString("hex");
         const expiration = Date.now() + 300000; // 5 minutes
