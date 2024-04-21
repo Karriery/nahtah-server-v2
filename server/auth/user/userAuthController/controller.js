@@ -20,27 +20,38 @@ module.exports = {
   async sendMail(req, res, next) {
     try {
       const { email } = req.body;
-
-      const user = await UserService.getUserbyEmail(email);
-      if (!user) {
-        return res.send({ message: "User not found" });
+      let user;
+      let code, expiration;
+      const admin = await AdminService.getAdminbyEmail(email);
+      if (admin) {
+        code = crypto.randomBytes(4).toString("hex");
+        expiration = Date.now() + 300000;
+        await AdminService.updateResetCode(email, code, expiration);
       } else {
-        const code = crypto.randomBytes(4).toString("hex");
-        const expiration = Date.now() + 300000; // 5 minutes
-        const info = await transporter.sendMail({
-          from: "Nahtah Coiffeur ",
-          to: email,
-          subject: "إعادة تعيين كلمة المرور",
-          text: `رمز إعادة تعيين كلمة المرور الخاص بك هو: ${code}`,
-          html: `<p>رمز إعادة تعيين كلمة المرور الخاص بك هو: <strong>${code}</strong>
-        <br>سينتهي هذا الرمز في 5 دقائق</p>`,
-        });
-
-        console.log("Message sent: %s", info.messageId);
-        res
-          .status(200)
-          .json({ message: "Password reset email sent", code, expiration });
+        user = await UserService.getUserbyEmail(email);
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+        code = crypto.randomBytes(4).toString("hex");
+        expiration = Date.now() + 300000;
+        await UserService.updateResetCode(email, code, expiration);
       }
+      if (!user && !admin) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      const info = await transporter.sendMail({
+        from: "Nahtah Coiffeur ",
+        to: email,
+        subject: "إعادة تعيين كلمة المرور",
+        text: `رمز إعادة تعيين كلمة المرور الخاص بك هو: ${code}`,
+        html: `<p>رمز إعادة تعيين كلمة المرور الخاص بك هو: <strong>${code}</strong>
+          <br>سينتهي هذا الرمز في 5 دقائق</p>`,
+      });
+
+      console.log("Message sent: %s", info.messageId);
+      res
+        .status(200)
+        .json({ message: "Password reset email sent", code, expiration });
     } catch (error) {
       console.error("Error sending email:", error);
       res.status(500).json({ error: "Error sending email" });
@@ -48,29 +59,36 @@ module.exports = {
   },
   async validateCode(req, res, next) {
     try {
-      const { email, code, expiration } = req.body;
+      const { email, code } = req.body;
+      let isValid = false;
+      const admin = await AdminService.getAdminbyEmail(email);
 
-      const user = await UserService.getUserbyEmail(email);
-      if (!user) {
-        return res.send({ message: "User not found" });
-      } else {
-        const sentCode = code;
-        const sentExpiration = parseInt(expiration);
-        if (sentCode === code && Date.now() < sentExpiration) {
-          console.log(Date.now(), sentExpiration);
-          res.status(200).json({ valid: true });
-        } else {
-          res
-            .status(400)
-            .json({ valid: false, message: "Invalid code or expired" });
+      if (admin) {
+        const sentExpiration = parseInt(admin.expiration);
+        if (admin.ResetCode === code && Date.now() < sentExpiration) {
+          isValid = true;
         }
+      } else {
+        const user = await UserService.getUserbyEmail(email);
+        if (user) {
+          const sentExpiration = parseInt(user.expiration);
+          if (user.ResetCode === code && Date.now() < sentExpiration) {
+            isValid = true;
+          }
+        }
+      }
+      if (isValid) {
+        res.status(200).json({ valid: true });
+      } else {
+        res
+          .status(400)
+          .json({ valid: false, message: "Invalid code or expired" });
       }
     } catch (error) {
       console.error("Error validating code:", error);
       res.status(500).json({ error: "Error validating code" });
     }
   },
-
   async getUsers(req, res, next) {
     try {
       var Users = await UserService.getAllUser();

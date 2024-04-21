@@ -13,6 +13,12 @@ module.exports = new (class AdminService {
   getAdminbyEmail(email) {
     return Admin.findOne({ email: email });
   }
+  updateResetCode(email, code, expiration) {
+    return Admin.findOneAndUpdate(
+      { email: email },
+      { ResetCode: code, expiration: expiration }
+    );
+  }
   getAllAdmin() {
     return Admin.find();
   }

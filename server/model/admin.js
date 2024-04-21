@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const db = require("./connection.js");
+const e = require("express");
 mongoose.Promise = global.Promise;
 
 const AdminSchema = new mongoose.Schema(
@@ -14,6 +15,8 @@ const AdminSchema = new mongoose.Schema(
     },
     position: { type: String, default: "Admin" },
     password: String,
+    ResetCode: String,
+    expiration: String,
     isSupper: { type: Boolean, default: true },
     type: { type: String, default: "Admin" },
   },

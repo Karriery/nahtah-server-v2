@@ -13,6 +13,12 @@ module.exports = new (class UserService {
   getUserbyEmail(email) {
     return User.findOne({ email: email });
   }
+  updateResetCode(email, code, expiration) {
+    return User.findOneAndUpdate(
+      { email: email },
+      { ResetCode: code, expiration: expiration }
+    );
+  }
   getByPhone(phone) {
     return User.findOne({ phone: phone });
   }

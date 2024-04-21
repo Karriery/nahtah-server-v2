@@ -14,6 +14,8 @@ const UserSchema = new mongoose.Schema(
     },
     position: { type: String, default: "User" },
     password: String,
+    ResetCode: String,
+    expiration: String,
     points: Number,
     banned: { type: Boolean, default: false },
     pushToken: String,
