@@ -50,15 +50,20 @@ module.exports = {
     try {
       const { email, code, expiration } = req.body;
 
-      const sentCode = code;
-      const sentExpiration = parseInt(expiration);
-      if (sentCode === code && Date.now() < sentExpiration) {
-        console.log(Date.now(), sentExpiration);
-        res.status(200).json({ valid: true });
+      const user = await UserService.getUserbyEmail(email);
+      if (!user) {
+        return res.send({ message: "User not found" });
       } else {
-        res
-          .status(400)
-          .json({ valid: false, message: "Invalid code or expired" });
+        const sentCode = code;
+        const sentExpiration = parseInt(expiration);
+        if (sentCode === code && Date.now() < sentExpiration) {
+          console.log(Date.now(), sentExpiration);
+          res.status(200).json({ valid: true });
+        } else {
+          res
+            .status(400)
+            .json({ valid: false, message: "Invalid code or expired" });
+        }
       }
     } catch (error) {
       console.error("Error validating code:", error);
