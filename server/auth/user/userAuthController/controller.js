@@ -3,8 +3,69 @@ const AdminService = require("../../../service/adminService.js");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: "abbassi2002ahmed.4@gmail.com",
+    pass: "nhpx skan porz mqtn",
+  },
+});
 
 module.exports = {
+  async sendMail(req, res, next) {
+    try {
+      const { email } = req.body;
+
+      const user = await UserService.getUserbyEmail(email);
+      if (!user) {
+        return res.status(404).json({ error: "not found" });
+      } else {
+        const code = crypto.randomBytes(4).toString("hex");
+        const expiration = Date.now() + 300000; // 5 minutes
+        const info = await transporter.sendMail({
+          from: "Nahtah Coiffeur ",
+          to: email,
+          subject: "إعادة تعيين كلمة المرور",
+          text: `رمز إعادة تعيين كلمة المرور الخاص بك هو: ${code}`,
+          html: `<p>رمز إعادة تعيين كلمة المرور الخاص بك هو: <strong>${code}</strong>
+        <br>سينتهي هذا الرمز في 5 دقائق</p>`,
+        });
+
+        console.log("Message sent: %s", info.messageId);
+        res
+          .status(200)
+          .json({ message: "Password reset email sent", code, expiration });
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      res.status(500).json({ error: "Error sending email" });
+    }
+  },
+  async validateCode(req, res, next) {
+    try {
+      const { email, code, expiration } = req.body;
+
+      const sentCode = code;
+      const sentExpiration = parseInt(expiration);
+      if (sentCode === code && Date.now() < sentExpiration) {
+        console.log(Date.now(), sentExpiration);
+        res.status(200).json({ valid: true });
+      } else {
+        res
+          .status(400)
+          .json({ valid: false, message: "Invalid code or expired" });
+      }
+    } catch (error) {
+      console.error("Error validating code:", error);
+      res.status(500).json({ error: "Error validating code" });
+    }
+  },
+
   async getUsers(req, res, next) {
     try {
       var Users = await UserService.getAllUser();

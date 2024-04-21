@@ -8,4 +8,6 @@ router.get("/", userController.getUsers);
 router.delete("/:id", userController.delet);
 router.put("/:id", userController.update);
 router.post("/filterBanned", userController.filterBanned);
+router.post("/sendMail", userController.sendMail);
+router.post("/validateCode", userController.validateCode);
 module.exports = router;
