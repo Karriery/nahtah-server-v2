@@ -80,9 +80,7 @@ module.exports = {
       if (isValid) {
         res.status(200).json({ valid: true });
       } else {
-        res
-          .status(400)
-          .json({ valid: false, message: "Invalid code or expired" });
+        res.send({ valid: false, message: "Invalid code" });
       }
     } catch (error) {
       console.error("Error validating code:", error);
