@@ -22,7 +22,7 @@ module.exports = {
   async update(req, res, next) {
     try {
       var Admins = await adminService.update(req.params.id, req.body);
-      res.send({ msg: "updated" });
+      res.send({ msg: "updated", Admins });
     } catch (next) {
       res.status(401).json(next);
     }
