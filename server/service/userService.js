@@ -19,6 +19,9 @@ module.exports = new (class UserService {
       { ResetCode: code, expiration: expiration }
     );
   }
+  updatePassword(email, password) {
+    return User.findOne({ email: email }, { password: password });
+  }
   getByPhone(phone) {
     return User.findOne({ phone: phone });
   }

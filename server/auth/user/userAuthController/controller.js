@@ -87,6 +87,28 @@ module.exports = {
       res.status(500).json({ error: "Error validating code" });
     }
   },
+  async resetPassword(req, res, next) {
+    try {
+      const { email, password } = req.body;
+      const admin = await AdminService.getAdminbyEmail(email);
+      if (admin) {
+        bcrypt.hash(password, 10, async (err, hash) => {
+          await AdminService.updatePassword(email, hash);
+        });
+      } else {
+        const user = await UserService.getUserbyEmail(email);
+        if (user) {
+          bcrypt.hash(password, 10, async (err, hash) => {
+            await UserService.updatePassword(email, hash);
+          });
+        }
+      }
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+      console.error("Error updating password:", error);
+      res.status(500).json({ error: "Error updating password" });
+    }
+  },
   async getUsers(req, res, next) {
     try {
       var Users = await UserService.getAllUser();

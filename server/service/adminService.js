@@ -19,6 +19,9 @@ module.exports = new (class AdminService {
       { ResetCode: code, expiration: expiration }
     );
   }
+  updatePassword(email, password) {
+    return Admin.findOne({ email: email }, { password: password });
+  }
   getAllAdmin() {
     return Admin.find();
   }
