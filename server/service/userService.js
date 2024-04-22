@@ -20,7 +20,7 @@ module.exports = new (class UserService {
     );
   }
   updatePassword(email, password) {
-    return User.findOne({ email: email }, { password: password });
+    return User.findOneAndUpdate({ email: email }, { password: password });
   }
   getByPhone(phone) {
     return User.findOne({ phone: phone });

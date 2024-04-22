@@ -20,7 +20,7 @@ module.exports = new (class AdminService {
     );
   }
   updatePassword(email, password) {
-    return Admin.findOne({ email: email }, { password: password });
+    return Admin.findOneAndUpdate({ email: email }, { password: password });
   }
   getAllAdmin() {
     return Admin.find();
