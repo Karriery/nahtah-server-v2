@@ -10,5 +10,5 @@ router.put("/:id", userController.update);
 router.post("/filterBanned", userController.filterBanned);
 router.post("/forgetPassword", userController.sendMail);
 router.post("/validateCode", userController.validateCode);
-router.put("/resetPassword", userController.resetPassword);
+router.post("/resetPassword", userController.resetPassword);
 module.exports = router;
