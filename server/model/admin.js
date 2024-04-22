@@ -7,7 +7,7 @@ const AdminSchema = new mongoose.Schema(
   {
     order: Number,
     username: String,
-    email: { type: String, default: "admin@example.com" },
+    email: { type: String, default: "admin@example.com", unique: true },
     image: {
       type: String,
       default:
