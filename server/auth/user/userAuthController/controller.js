@@ -101,6 +101,9 @@ module.exports = {
           bcrypt.hash(password, 10, async (err, hash) => {
             await UserService.updatePassword(email, hash);
           });
+        } else {
+          res.status(404).json({ error: "User not found" });
+          return;
         }
       }
       res.status(200).json({ message: "Password updated successfully" });
@@ -109,6 +112,7 @@ module.exports = {
       res.status(500).json({ error: "Error updating password" });
     }
   },
+
   async getUsers(req, res, next) {
     try {
       var Users = await UserService.getAllUser();
