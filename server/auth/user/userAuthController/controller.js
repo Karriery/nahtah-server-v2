@@ -167,6 +167,14 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+  async getUserById(req, res, next) {
+    try {
+      var Users = await UserService.getUserById(req.params.id);
+      res.send(Users);
+    } catch (next) {
+      res.status(401).json(next);
+    }
+  },
   async signUpUser(req, res) {
     try {
       // res.send(req.body);

@@ -19,6 +19,14 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+  async getAdminById(req, res, next) {
+    try {
+      var Admins = await adminService.getAdminById(req.params.id);
+      res.send(Admins);
+    } catch (next) {
+      res.status(401).json(next);
+    }
+  },
   async update(req, res, next) {
     try {
       var Admins = await adminService.update(req.params.id, req.body);

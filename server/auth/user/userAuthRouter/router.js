@@ -5,6 +5,7 @@ router.post("/signup", userController.signUpUser);
 router.post("/signin", userController.login);
 router.post("/verify", userController.verify);
 router.get("/", userController.getUsers);
+router.get("/:id", userController.getUserById);
 router.delete("/:id", userController.delet);
 router.put("/:id", userController.update);
 router.post("/filterBanned", userController.filterBanned);
