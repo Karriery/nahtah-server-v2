@@ -155,15 +155,12 @@ module.exports = {
     try {
       const Users = await UserService.getByPhone(req.body.phone);
       const Admins = await AdminService.getAdminByPhone(req.body.phone);
-      if (!Users && !Admins) {
-        res.send({ msg: "Nothing" });
-        return;
+      if (Users) {
+        res.send({ Users });
+      } else if (Admins) {
+        res.send({ Admins });
       } else {
-        const response = {
-          Users: Users || null,
-          Admins: Admins || null,
-        };
-        res.send(response);
+        res.send({ msg: "not found" });
       }
     } catch (error) {
       res.status(401).json({ error: error.message });
