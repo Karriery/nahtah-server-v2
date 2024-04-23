@@ -153,10 +153,20 @@ module.exports = {
   },
   async update(req, res, next) {
     try {
-      var Users = await UserService.update(req.params.id, req.body);
-      res.send({ msg: "updated", Users });
-    } catch (next) {
-      res.status(401).json(next);
+      var admin = await AdminService.getAdminById(req.params.id);
+      var user = await UserService.getUserById(req.params.id);
+
+      if (admin) {
+        var updatedAdmin = await AdminService.update(req.params.id, req.body);
+        res.send({ msg: "updated", admin: updatedAdmin });
+      } else if (user) {
+        var updatedUser = await UserService.update(req.params.id, req.body);
+        res.send({ msg: "updated", user: updatedUser });
+      } else {
+        res.status(404).json({ msg: "not found" });
+      }
+    } catch (error) {
+      next(error);
     }
   },
   async getUsers(req, res, next) {
