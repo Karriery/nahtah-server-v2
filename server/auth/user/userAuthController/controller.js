@@ -161,8 +161,12 @@ module.exports = {
 
       const Users = await UserService.getByPhone(phone);
       const Admins = await AdminService.getAdminByPhone(phone);
-      const allUsers = Users.concat(Admins);
-      res.send(allUsers);
+      if (!Users && !Admins) {
+        res.send({ msg: "Nothing" });
+      } else {
+        const allUsers = Users.concat(Admins);
+        res.send(allUsers);
+      }
     } catch (error) {
       res.status(401).json({ error: error.message });
     }
