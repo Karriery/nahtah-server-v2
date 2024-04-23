@@ -153,12 +153,18 @@ module.exports = {
   },
   async getUsersAndAdminsByPhone(req, res, next) {
     try {
-      var Users = await UserService.getByPhone(req.body);
-      var Admins = await AdminService.getAdminByPhone(req.body);
+      const phone = req.body.phone;
+      if (typeof phone !== "string") {
+        throw new Error("Phone number must be a string.");
+      }
+      // Perform additional validation/sanitization if necessary
+
+      const Users = await UserService.getByPhone(phone);
+      const Admins = await AdminService.getAdminByPhone(phone);
       const allUsers = Users.concat(Admins);
       res.send(allUsers);
-    } catch (next) {
-      res.status(401).json(next);
+    } catch (error) {
+      res.status(401).json({ error: error.message });
     }
   },
   async update(req, res, next) {
