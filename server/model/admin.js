@@ -8,6 +8,7 @@ const AdminSchema = new mongoose.Schema(
     order: Number,
     username: String,
     email: { type: String, default: "admin@example.com", unique: true },
+    phone: { type: String, default: "" },
     image: {
       type: String,
       default:
