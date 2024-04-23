@@ -151,6 +151,16 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+  async getUsersAndAdminsByPhone(req, res, next) {
+    try {
+      var Users = await UserService.getByPhone(req.params.phone);
+      var Admins = await AdminService.getAdminByPhone(req.params.phone);
+      const allUsers = Users.concat(Admins);
+      res.send(allUsers);
+    } catch (next) {
+      res.status(401).json(next);
+    }
+  },
   async update(req, res, next) {
     try {
       var admin = await AdminService.getAdminById(req.params.id);
