@@ -153,8 +153,8 @@ module.exports = {
   },
   async getUsersAndAdminsByPhone(req, res, next) {
     try {
-      var Users = await UserService.getByPhone(req.params.phone);
-      var Admins = await AdminService.getAdminByPhone(req.params.phone);
+      var Users = await UserService.getByPhone(req.body);
+      var Admins = await AdminService.getAdminByPhone(req.body);
       const allUsers = Users.concat(Admins);
       res.send(allUsers);
     } catch (next) {

@@ -12,5 +12,5 @@ router.post("/filterBanned", userController.filterBanned);
 router.post("/forgetPassword", userController.sendMail);
 router.post("/validateCode", userController.validateCode);
 router.post("/resetPassword", userController.resetPassword);
-router.get("/getByPhone/:phone", userController.getUsersAndAdminsByPhone);
+router.post("/getByPhone", userController.getUsersAndAdminsByPhone);
 module.exports = router;
