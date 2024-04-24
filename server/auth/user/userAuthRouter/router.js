@@ -13,4 +13,6 @@ router.post("/forgetPassword", userController.sendMail);
 router.post("/validateCode", userController.validateCode);
 router.post("/resetPassword", userController.resetPassword);
 router.post("/getByPhone", userController.getUsersAndAdminsByPhone);
+router.post("/getUserByPhone", userController.getUserByPhone);
+
 module.exports = router;

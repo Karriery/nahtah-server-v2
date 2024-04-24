@@ -166,6 +166,18 @@ module.exports = {
       res.status(401).json({ error: error.message });
     }
   },
+  async getUserByPhone(req, res, next) {
+    try {
+      const Users = await UserService.getByPhone(req.body.phone);
+      if (Users) {
+        res.send({ Users });
+      } else {
+        res.send({ msg: "not found" });
+      }
+    } catch (error) {
+      res.status(401).json({ error: error.message });
+    }
+  },
   async update(req, res, next) {
     try {
       var admin = await AdminService.getAdminById(req.params.id);
