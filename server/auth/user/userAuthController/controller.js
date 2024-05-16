@@ -153,11 +153,12 @@ module.exports = {
   },
   async getUsersAndAdminsByPhone(req, res, next) {
     try {
-      const Users = await UserService.getByPhone(req.body.phone);
-      const Admins = await AdminService.getAdminByPhone(req.body.phone);
-      if (Users) {
+      const { phone } = req.body;
+      const Users = await UserService.getByPhone(phone);
+      const Admins = await AdminService.getAdminByPhone(phone);
+      if (Users.length > 0) {
         res.send({ Users });
-      } else if (Admins) {
+      } else if (Admins.length > 0) {
         res.send({ Admins });
       } else {
         res.send({ msg: "not found" });
@@ -166,6 +167,7 @@ module.exports = {
       res.status(401).json({ error: error.message });
     }
   },
+
   async getUserByPhone(req, res, next) {
     try {
       const Users = await UserService.getByPhone(req.body.phone);
