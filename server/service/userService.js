@@ -22,9 +22,12 @@ module.exports = new (class UserService {
   updatePassword(email, password) {
     return User.findOneAndUpdate({ email: email }, { password: password });
   }
-  getByPhone(phone) {
-    return User.findOne({ phone: phone });
+  async getByPhone(phone) {
+    // Use a regex to match the phone number partially
+    const regex = new RegExp(phone, "i"); // 'i' flag for case-insensitive matching
+    return User.find({ phone: regex });
   }
+
   getAllUser() {
     return User.find();
   }

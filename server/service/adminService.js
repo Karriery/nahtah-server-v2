@@ -10,8 +10,10 @@ module.exports = new (class AdminService {
   getAdminByUsername(username) {
     return Admin.findOne({ username: username });
   }
-  getAdminByPhone(phone) {
-    return Admin.findOne({ phone: phone });
+  async getAdminByPhone(phone) {
+    // Use a regex to match the phone number partially
+    const regex = new RegExp(phone, "i"); // 'i' flag for case-insensitive matching
+    return Admin.find({ phone: regex });
   }
   getAdminbyEmail(email) {
     return Admin.findOne({ email: email });
