@@ -13,6 +13,7 @@ module.exports = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
   async createStore(req, res) {
     try {
       const existingStore = await StoreService.findOne();
@@ -33,15 +34,18 @@ module.exports = {
     try {
       const stores = await StoreService.getAll();
       const timeRanges = stores.map((store) => {
-        const timeOpen = new Date(`2024-01-01T${store.timeOpen}`);
-        const timeClose = new Date(`2024-01-01T${store.timeClose}`);
+        const timeOpen = new Date(store.timeOpen);
+        const timeClose = new Date(store.timeClose);
         const timeRanges = [];
         let currentTime = new Date(timeOpen);
         while (currentTime < timeClose) {
-          const hour = currentTime.getHours().toString().padStart(2, "0");
-          const minute = currentTime.getMinutes().toString().padStart(2, "0");
+          const hour = currentTime.getUTCHours().toString().padStart(2, "0");
+          const minute = currentTime
+            .getUTCMinutes()
+            .toString()
+            .padStart(2, "0");
           timeRanges.push(`${hour}:${minute}`);
-          currentTime.setMinutes(currentTime.getMinutes() + 30);
+          currentTime.setUTCMinutes(currentTime.getUTCMinutes() + 30);
         }
         return timeRanges;
       });
@@ -53,6 +57,7 @@ module.exports = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
   async getStoreById(req, res) {
     try {
       const storeId = req.params.id;
@@ -66,6 +71,7 @@ module.exports = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
   async updateStore(req, res) {
     try {
       const storeId = req.params.id;
@@ -76,6 +82,7 @@ module.exports = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
   async deleteStore(req, res) {
     try {
       const storeId = req.params.id;
@@ -86,13 +93,14 @@ module.exports = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
   async deleteAllStores(req, res) {
     try {
       await StoreService.DeleteAll();
       res.status(204).end();
     } catch (error) {
       console.error("Error deleting stores:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status500().json({ error: "Internal server error" });
     }
   },
 };
