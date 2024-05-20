@@ -7,12 +7,12 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  host: "smtp.hostinger.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: "abbassi2002ahmed.4@gmail.com",
-    pass: "nhpx skan porz mqtn",
+    user: "contact@nahtah.com",
+    pass: "Nahtah2024!",
   },
 });
 

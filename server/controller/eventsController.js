@@ -278,24 +278,30 @@ module.exports = {
       chrone(Event.start, 15, async () => {
         await SendNotification(
           client,
-          "Event starting",
-          "The event is starting soon",
+          "تذكير",
+          `لديك موعد حلاقة على الساعة ${new Date(
+            Event.start
+          ).getHours()}:${new Date(Event.start).getMinutes()}`,
+          "الحدث سيبدأ قريبًا",
           "default"
         );
       });
+
       chrone(Event.start, 60, async () => {
         await SendNotification(
           client,
-          "Event starting",
-          "The event is starting soon",
+          "تذكير",
+          `لديك موعد حلاقة على الساعة ${new Date(
+            Event.start
+          ).getHours()}:${new Date(Event.start).getMinutes()}`,
           "default"
         );
       });
       chrone(Event.start, -30, async () => {
         await SendNotification(
           client,
-          "Event finished",
-          "The event has finished",
+          "انتهاء الحدث",
+          "انتهى الحدث",
           "default"
         );
       });
