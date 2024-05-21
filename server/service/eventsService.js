@@ -42,7 +42,10 @@ module.exports = new (class EventService {
   getEventTodays() {
     const today = new Date();
     const todayString = today.toISOString().split("T")[0];
-    return Event.find({ start: todayString });
+
+    return Event.find({
+      start: { $regex: `^${todayString}` },
+    });
   }
 
   delete(_id) {
