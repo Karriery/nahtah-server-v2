@@ -7,7 +7,6 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 const transporter = nodemailer.createTransport({
-  name: "nahtah.com",
   host: "smtp.hostinger.com",
   port: 465,
   secure: true,
