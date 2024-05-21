@@ -40,7 +40,7 @@ module.exports = {
         return res.status(404).json({ message: "User not found" });
       }
       const info = await transporter.sendMail({
-        from: "Nahtah Coiffeur ",
+        from: "contact@nahtah.com",
         to: email,
         subject: "إعادة تعيين كلمة المرور",
         text: `رمز إعادة تعيين كلمة المرور الخاص بك هو: ${code}`,
@@ -48,7 +48,7 @@ module.exports = {
           <br>سينتهي هذا الرمز في 5 دقائق</p>`,
       });
 
-      console.log("Message sent: %s", info.messageId);
+      console.log("Message sent: %s", info.accepted);
       res
         .status(200)
         .json({ message: "Password reset email sent", code, expiration });
