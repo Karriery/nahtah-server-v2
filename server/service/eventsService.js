@@ -45,6 +45,7 @@ module.exports = new (class EventService {
 
     return Event.find({
       start: { $regex: `^${todayString}` },
+      status: true,
     });
   }
 
