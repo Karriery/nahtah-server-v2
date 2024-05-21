@@ -259,6 +259,16 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+  getEventTodays(req, res, next) {
+    EventService.getEventTodays()
+      .then((events) => {
+        res.send(events);
+      })
+      .catch((error) => {
+        console.error("Error fetching events:", error);
+        res.status(500).send("Internal Server Error");
+      });
+  },
 
   async test(req, res, next) {
     await SendNotification(

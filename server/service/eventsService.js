@@ -39,6 +39,11 @@ module.exports = new (class EventService {
   getEventByUser(userId) {
     return Event.find({ userId: userId });
   }
+  getEventTodays() {
+    const today = new Date();
+    const todayString = today.toISOString().split("T")[0];
+    return Event.find({ start: todayString });
+  }
 
   delete(_id) {
     return Event.findOneAndDelete({ _id });
