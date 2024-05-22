@@ -259,8 +259,8 @@ module.exports = {
       res.status(401).json(next);
     }
   },
-  getEventTodays(req, res, next) {
-    EventService.getEventTodays()
+  getEventTodaysAndTomorrow(req, res, next) {
+    EventService.getEventsTodayAndTomorrow()
       .then((events) => {
         res.send(events);
       })

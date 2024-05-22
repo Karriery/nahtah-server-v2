@@ -39,14 +39,21 @@ module.exports = new (class EventService {
   getEventByUser(userId) {
     return Event.find({ userId: userId });
   }
-  getEventTodays() {
+  getEventsTodayAndTomorrow() {
     const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1); // Get tomorrow's date
+
     const todayString = today.toISOString().split("T")[0];
+    const tomorrowString = tomorrow.toISOString().split("T")[0];
 
     return Event.find({
-      start: { $regex: `^${todayString}` },
+      $or: [
+        { start: { $regex: `^${todayString}` } },
+        { start: { $regex: `^${tomorrowString}` } },
+      ],
       status: true,
-    }).populate("client");
+    });
   }
 
   delete(_id) {

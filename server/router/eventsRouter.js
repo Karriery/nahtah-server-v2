@@ -14,5 +14,5 @@ router.delete("/:id", eventController.deleteByParams);
 router.delete("/", eventController.deleteAllEvents);
 router.put("/accept/:_id", eventController.accept);
 router.put("/test/:client", eventController.test);
-router.get("/getEventTodays", eventController.getEventTodays);
+router.get("/getEventTodays", eventController.getEventTodaysAndTomorrow);
 module.exports = router;
