@@ -39,21 +39,39 @@ module.exports = new (class EventService {
   getEventByUser(userId) {
     return Event.find({ userId: userId });
   }
-  getEventsTodayAndTomorrow() {
+  async getEventsTodayAndTomorrow() {
     const today = new Date();
     const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1); // Get tomorrow's date
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     const todayString = today.toISOString().split("T")[0];
     const tomorrowString = tomorrow.toISOString().split("T")[0];
 
-    return Event.find({
-      $or: [
-        { start: { $regex: `^${todayString}` } },
-        { start: { $regex: `^${tomorrowString}` } },
-      ],
-      status: true,
-    });
+    try {
+      const TheEvents = await Event.find({
+        $or: [
+          { start: { $regex: `^${todayString}` } },
+          { start: { $regex: `^${tomorrowString}` } },
+        ],
+        status: true,
+      });
+      if (TheEvents && TheEvents.length > 0) {
+        const filterTheEvents = TheEvents.filter((event) => {
+          const currentDate = new Date();
+          const startTimeToday = new Date(currentDate.setHours(8, 0, 0, 0));
+          const endTimeTomorrow = new Date(startTimeToday);
+          endTimeTomorrow.setDate(endTimeTomorrow.getDate() + 1);
+          const eventStart = new Date(event.start);
+          return eventStart >= startTimeToday && eventStart < endTimeTomorrow;
+        });
+
+        return filterTheEvents;
+      } else {
+        return { message: "No events found" };
+      }
+    } catch (error) {
+      return { message: `Error retrieving events: ${error.message}` };
+    }
   }
 
   delete(_id) {
