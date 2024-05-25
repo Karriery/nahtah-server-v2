@@ -83,13 +83,10 @@ module.exports = new (class EventService {
           { start: { $regex: `^${tomorrowString}` } },
         ],
         status: true,
-      });
+      }).populate("client");
       if (TheEvents && TheEvents.length > 0) {
         const filterTheEvents = TheEvents.filter((event) => {
           const currentDate = new Date();
-          console.log("currentDate", currentDate);
-          console.log("firstBeforeMidnight", firstBeforeMidnight);
-          console.log("lastAfterMidnight", lastAfterMidnight);
           const startTimeToday = new Date(
             currentDate.setHours(
               firstBeforeMidnight.split(":")[0],
@@ -104,12 +101,6 @@ module.exports = new (class EventService {
             parseInt(lastAfterMidnight.split(":")[1])
           );
           endTimeTomorrow.setDate(endTimeTomorrow.getDate() + 1);
-          console.log(
-            "startTimeToday",
-            startTimeToday,
-            "endTimeTomorrow",
-            endTimeTomorrow
-          );
           const eventStart = new Date(event.start);
           return eventStart >= startTimeToday && eventStart < endTimeTomorrow;
         });
@@ -144,10 +135,30 @@ module.exports = new (class EventService {
     const regex = new RegExp(today.slice(0, 10), "i");
     return Event.find({ start: { $regex: regex } });
   }
-  getEventByUserIdAndStart(userId, start) {
-    const dateRegex = new RegExp(`^${start}`);
-    return Event.find({ userId: userId, start: { $regex: dateRegex } });
+
+  async getEventByUserIdAndStart(userId, start) {
+    const startDate = new Date(start);
+    const nextDate = new Date(startDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+    const startDateString = startDate.toISOString().slice(0, 10);
+    const nextDateString = nextDate.toISOString().slice(0, 10);
+    const dateRegex = new RegExp(`^${startDateString}`);
+    const dateRegexEnd = new RegExp(`^${nextDateString}`);
+    const events = await Event.find({
+      $or: [
+        { start: { $regex: dateRegex } },
+        { start: { $regex: dateRegexEnd } },
+      ],
+      userId: userId,
+    });
+
+    return events.map((event) => {
+      const eventDate = event.start.split(" ")[0];
+      const isTomorrow = eventDate === nextDateString;
+      return { ...event.toObject(), isTomorrow };
+    });
   }
+
   async getEventsInRange(startRange, endRange, startRangTime, endRangTime) {
     const AllEvents = await Event.find().populate("client");
     const eventsInRange = await AllEvents.filter((event) => {

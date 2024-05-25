@@ -224,9 +224,11 @@ module.exports = {
     try {
       const { userId, start } = req.body;
       const events = await EventService.getEventByUserIdAndStart(userId, start);
-
       const startTimes = events.map((event) => {
-        return event.start.split(" ")[1];
+        return {
+          eventsDate: event.start.split(" ")[1],
+          isTomorrow: event.isTomorrow,
+        };
       });
 
       res.send(start ? startTimes : []);
