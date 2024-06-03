@@ -224,7 +224,10 @@ module.exports = {
     try {
       const { userId, start } = req.body;
       const events = await EventService.getEventByUserIdAndStart(userId, start);
-      const startTimes = events.map((event) => {
+      const eventsWithStatusNotFalse = events.filter(
+        (event) => event.status != false
+      );
+      const startTimes = eventsWithStatusNotFalse.map((event) => {
         return {
           eventsDate: event.start.split(" ")[1],
           isTomorrow: event.isTomorrow,
