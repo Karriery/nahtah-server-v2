@@ -133,7 +133,10 @@ module.exports = new (class EventService {
   }
   getbyToday(today) {
     const regex = new RegExp(today.slice(0, 10), "i");
-    return Event.find({ start: { $regex: regex } });
+    return Event.find({
+      start: { $regex: regex },
+      status: { $ne: false },
+    }).populate("client");
   }
 
   async getEventByUserIdAndStart(userId, start) {
