@@ -39,6 +39,80 @@ module.exports = new (class EventService {
   getEventByUser(userId) {
     return Event.find({ userId: userId });
   }
+  // async getEventsTodayAndTomorrow() {
+  //   const stores = await StoreService.getAll();
+  //   const timeRanges = stores.map((store) => {
+  //     const timeOpen = new Date(store.timeOpen);
+  //     const timeClose = new Date(store.timeClose);
+  //     const timeRanges = [];
+  //     let currentTime = new Date(timeOpen);
+  //     while (currentTime < timeClose) {
+  //       const hour = currentTime.getUTCHours().toString().padStart(2, "0");
+  //       const minute = currentTime.getUTCMinutes().toString().padStart(2, "0");
+  //       timeRanges.push(`${hour}:${minute}`);
+  //       currentTime.setUTCMinutes(currentTime.getUTCMinutes() + 30);
+  //     }
+  //     return timeRanges;
+  //   });
+  //   const flattenedTimeRanges = timeRanges.flat();
+  //   const beforeMidnight = [];
+  //   const afterMidnight = [];
+  //   let isAfterMidnight = false;
+  //   flattenedTimeRanges.forEach((option) => {
+  //     if (isAfterMidnight || option === "00:00") {
+  //       afterMidnight.push(option);
+  //       isAfterMidnight = true;
+  //     } else {
+  //       beforeMidnight.push(option);
+  //     }
+  //   });
+  //   const firstBeforeMidnight = beforeMidnight[0];
+  //   const lastAfterMidnight = afterMidnight[afterMidnight.length - 1];
+
+  //   const today = new Date();
+  //   const tomorrow = new Date(today);
+  //   tomorrow.setDate(tomorrow.getDate() + 1);
+
+  //   const todayString = today.toISOString().split("T")[0];
+  //   const tomorrowString = tomorrow.toISOString().split("T")[0];
+
+  //   try {
+  //     const TheEvents = await Event.find({
+  //       $or: [
+  //         { start: { $regex: `^${todayString}` } },
+  //         { start: { $regex: `^${tomorrowString}` } },
+  //       ],
+  //       status: true,
+  //     }).populate("client");
+  //     if (TheEvents && TheEvents.length > 0) {
+  //       const filterTheEvents = TheEvents.filter((event) => {
+  //         const currentDate = new Date();
+  //         const startTimeToday = new Date(
+  //           currentDate.setHours(
+  //             firstBeforeMidnight.split(":")[0],
+  //             firstBeforeMidnight.split(":")[1],
+  //             0,
+  //             0
+  //           )
+  //         );
+  //         const endTimeTomorrow = new Date(currentDate);
+  //         endTimeTomorrow.setUTCHours(
+  //           parseInt(lastAfterMidnight.split(":")[0]),
+  //           parseInt(lastAfterMidnight.split(":")[1])
+  //         );
+  //         endTimeTomorrow.setDate(endTimeTomorrow.getDate() + 1);
+  //         const eventStart = new Date(event.start);
+  //         return eventStart >= startTimeToday && eventStart < endTimeTomorrow;
+  //       });
+
+  //       return filterTheEvents;
+  //     } else {
+  //       return { message: "No events found" };
+  //     }
+  //   } catch (error) {
+  //     return { message: `Error retrieving events: ${error.message}` };
+  //   }
+  // }
   async getEventsTodayAndTomorrow() {
     const stores = await StoreService.getAll();
     const timeRanges = stores.map((store) => {
@@ -58,8 +132,8 @@ module.exports = new (class EventService {
     const beforeMidnight = [];
     const afterMidnight = [];
     let isAfterMidnight = false;
-    flattenedTimeRanges.forEach((option) => {
-      if (isAfterMidnight || option === "00:00") {
+    flattenedTimeRanges.forEach((option, index) => {
+      if (isAfterMidnight || (option === "00:00" && index !== 0)) {
         afterMidnight.push(option);
         isAfterMidnight = true;
       } else {
@@ -67,14 +141,19 @@ module.exports = new (class EventService {
       }
     });
     const firstBeforeMidnight = beforeMidnight[0];
-    const lastAfterMidnight = afterMidnight[afterMidnight.length - 1];
+    const lastAfterMidnight = afterMidnight[afterMidnight.length - 1]
+      ? afterMidnight[afterMidnight.length - 1]
+      : null;
 
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const todayString = today.toISOString().split("T")[0];
-    const tomorrowString = tomorrow.toISOString().split("T")[0];
+    const tomorrowString =
+      lastAfterMidnight === null
+        ? todayString
+        : tomorrow.toISOString().split("T")[0];
 
     try {
       const TheEvents = await Event.find({
@@ -95,14 +174,20 @@ module.exports = new (class EventService {
               0
             )
           );
-          const endTimeTomorrow = new Date(currentDate);
-          endTimeTomorrow.setUTCHours(
-            parseInt(lastAfterMidnight.split(":")[0]),
-            parseInt(lastAfterMidnight.split(":")[1])
-          );
-          endTimeTomorrow.setDate(endTimeTomorrow.getDate() + 1);
-          const eventStart = new Date(event.start);
-          return eventStart >= startTimeToday && eventStart < endTimeTomorrow;
+          if (lastAfterMidnight === null) {
+            const eventStart = new Date(event.start);
+            console.log("eventStart", eventStart);
+            return eventStart >= startTimeToday;
+          } else {
+            const endTimeTomorrow = new Date(currentDate);
+            endTimeTomorrow.setUTCHours(
+              parseInt(lastAfterMidnight.split(":")[0]),
+              parseInt(lastAfterMidnight.split(":")[1])
+            );
+            endTimeTomorrow.setDate(endTimeTomorrow.getDate() + 1);
+            const eventStart = new Date(event.start);
+            return eventStart >= startTimeToday && eventStart < endTimeTomorrow;
+          }
         });
 
         return filterTheEvents;
