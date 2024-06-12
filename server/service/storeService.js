@@ -7,8 +7,18 @@ class StoreService {
 
   async create(data) {
     const { timeOpen, timeClose, userId } = data;
-
-    // Create date objects for the provided times
+    if (!timeOpen || !timeClose) {
+      let openTime = new Date(`1970-01-01T00:00:00Z`);
+      let closeTime = new Date(`1970-01-01T23:59:59Z`);
+      data.timeOpen = openTime;
+      data.timeClose = closeTime;
+      const storeData = {
+        timeOpen: openTime,
+        timeClose: closeTime,
+        userId: userId,
+      };
+      return Store.create(storeData);
+    }
     let openTime = new Date(`1970-01-01T${timeOpen}:00Z`);
     let closeTime = new Date(`1970-01-01T${timeClose}:00Z`);
 
