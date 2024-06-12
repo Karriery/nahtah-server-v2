@@ -154,42 +154,34 @@ module.exports = new (class EventService {
       lastAfterMidnight === null
         ? todayString
         : tomorrow.toISOString().split("T")[0];
-
     try {
-      const TheEvents = await Event.find({
-        $or: [
-          { start: { $regex: `^${todayString}` } },
-          { start: { $regex: `^${tomorrowString}` } },
-        ],
-        status: true,
-      }).populate("client");
+      const TheEvents = await Event.find({ status: true }).populate("client");
       if (TheEvents && TheEvents.length > 0) {
-        const filterTheEvents = TheEvents.filter((event) => {
-          const currentDate = new Date();
-          const startTimeToday = new Date(
-            currentDate.setHours(
-              firstBeforeMidnight.split(":")[0],
-              firstBeforeMidnight.split(":")[1],
-              0,
-              0
-            )
+        const eventSOfToday = TheEvents.filter((event) => {
+          const eventDate = event.start.split(" ")[0];
+
+          return eventDate === todayString;
+        });
+        const eventstillLastBeforeMidnight = eventSOfToday.filter((event) => {
+          const eventDate = event.start.split(" ")[1];
+          return (
+            eventDate >= firstBeforeMidnight &&
+            eventDate <= beforeMidnight[beforeMidnight.length - 1]
           );
-          if (lastAfterMidnight === null) {
-            const eventStart = new Date(event.start);
-            console.log("eventStart", eventStart);
-            return eventStart >= startTimeToday;
-          } else {
-            const endTimeTomorrow = new Date(currentDate);
-            endTimeTomorrow.setUTCHours(
-              parseInt(lastAfterMidnight.split(":")[0]),
-              parseInt(lastAfterMidnight.split(":")[1])
-            );
-            endTimeTomorrow.setDate(endTimeTomorrow.getDate() + 1);
-            const eventStart = new Date(event.start);
-            return eventStart >= startTimeToday && eventStart < endTimeTomorrow;
-          }
+        });
+        const eventSOfTomorrow = TheEvents.filter((event) => {
+          const eventDate = event.start.split(" ")[0];
+          return eventDate === tomorrowString;
+        });
+        const eventstillLastAfterMidnight = eventSOfTomorrow.filter((event) => {
+          const eventDate = event.start.split(" ")[1];
+          return eventDate <= lastAfterMidnight;
         });
 
+        const filterTheEvents = [
+          ...eventstillLastBeforeMidnight,
+          ...eventstillLastAfterMidnight,
+        ];
         return filterTheEvents;
       } else {
         return { message: "No events found" };
