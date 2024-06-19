@@ -349,8 +349,8 @@ module.exports = {
       chrone(Event.start, -30, async () => {
         await SendNotification(
           client,
-          "انتهاء الحدث",
-          "انتهى الحدث",
+          " تقييم الخدمة",
+          " ماهو تقييمك للخدمة و الحلاق",
           "default"
         );
       });
