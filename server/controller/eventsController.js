@@ -46,43 +46,12 @@ module.exports = {
       page = parseInt(page) || 1;
       limit = parseInt(limit) || 7;
       if (events && events.length > 0) {
+        // Sort by createdAt field
         const sortedEvents = events.sort((a, b) => {
-          // Custom sorting logic
-          const getStatusValue = (event) => {
-            if (event.status === null) {
-              return 1;
-            } else if (
-              event.status &&
-              new Date() < new Date(event.end).getTime() + 60 * 60 * 1000
-            ) {
-              return 2;
-            } else if (
-              event.status &&
-              new Date() > new Date(event.end).getTime() + 60 * 60 * 1000
-            ) {
-              return 3;
-            } else {
-              return 4;
-            }
-          };
-
-          // Sort by status first
-          const statusComparison = getStatusValue(a) - getStatusValue(b);
-          if (statusComparison !== 0) {
-            return statusComparison;
-          }
-
-          // If status is the same, sort by event date
-          const dateA = new Date(a.start.replace(" ", "T"));
-          const dateB = new Date(b.start.replace(" ", "T"));
-          const dateComparison = dateB - dateA;
-          if (dateComparison !== 0) {
-            return dateComparison;
-          }
-          // If event dates are the same, sort by start time
-          const timeA = dateA.getHours() * 60 + dateA.getMinutes();
-          const timeB = dateB.getHours() * 60 + dateB.getMinutes();
-          return timeB - timeA;
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          // return dateA - dateB; // For ascending order
+          return dateB - dateA; // For descending order
         });
 
         const skip = (page - 1) * limit;
@@ -103,6 +72,71 @@ module.exports = {
       return res.status(500).send("Internal Server Error");
     }
   },
+
+  // async getEventByClient(req, res, next) {
+  //   try {
+  //     var events = await EventService.findbyClient(req.params.id);
+  //     let { page, limit } = req.query;
+  //     page = parseInt(page) || 1;
+  //     limit = parseInt(limit) || 7;
+  //     if (events && events.length > 0) {
+  //       const sortedEvents = events.sort((a, b) => {
+  //         // Custom sorting logic
+  //         const getStatusValue = (event) => {
+  //           if (event.status === null) {
+  //             return 1;
+  //           } else if (
+  //             event.status &&
+  //             new Date() < new Date(event.end).getTime() + 60 * 60 * 1000
+  //           ) {
+  //             return 2;
+  //           } else if (
+  //             event.status &&
+  //             new Date() > new Date(event.end).getTime() + 60 * 60 * 1000
+  //           ) {
+  //             return 3;
+  //           } else {
+  //             return 4;
+  //           }
+  //         };
+
+  //         // Sort by status first
+  //         const statusComparison = getStatusValue(a) - getStatusValue(b);
+  //         if (statusComparison !== 0) {
+  //           return statusComparison;
+  //         }
+
+  //         // If status is the same, sort by event date
+  //         const dateA = new Date(a.start.replace(" ", "T"));
+  //         const dateB = new Date(b.start.replace(" ", "T"));
+  //         const dateComparison = dateB - dateA;
+  //         if (dateComparison !== 0) {
+  //           return dateComparison;
+  //         }
+  //         // If event dates are the same, sort by start time
+  //         const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+  //         const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+  //         return timeB - timeA;
+  //       });
+
+  //       const skip = (page - 1) * limit;
+  //       const paginatedEvents = sortedEvents.slice(skip, skip + limit);
+  //       const totalEvents = sortedEvents.length;
+  //       const totalPages = Math.ceil(totalEvents / limit);
+
+  //       res.send({
+  //         sortedEvents: paginatedEvents,
+  //         totalPages,
+  //         currentPage: page,
+  //       });
+  //     } else {
+  //       return res.send({ message: "No events found" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching event:", error);
+  //     return res.status(500).send("Internal Server Error");
+  //   }
+  // },
   async deleteByParams(req, res, next) {
     try {
       var Event = await EventService.delete(req.params.id);
