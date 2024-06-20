@@ -211,7 +211,7 @@ module.exports = {
       var sameDayEvents = await EventService.getbyToday(req.body.start);
       for (var i = 0; i < sameDayEvents.length; i++) {
         if (
-          req.body.start.valueOf() >= sameDayEvents[i].start.valueOf() &&
+          req.body.start.valueOf() === sameDayEvents[i].start.valueOf() &&
           req.body.start.valueOf() < sameDayEvents[i].end.valueOf() &&
           req.body.userId === sameDayEvents[i].userId
         ) {
@@ -225,6 +225,7 @@ module.exports = {
       var Event = await EventService.create(req.body);
       req.io.emit("newEvent", Event);
       res.send({ msg: "inserted" });
+
       return;
     } catch (next) {
       res.status(401).json(next);
