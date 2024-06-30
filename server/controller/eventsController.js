@@ -362,14 +362,22 @@ module.exports = {
   },
 };
 
+// function chrone(date, minutesBeforeDate, callback) {
+//   const targetDateTime = new Date(date);
+//   const fifteenMinutesBefore = new Date(
+//     targetDateTime.getTime() - minutesBeforeDate * 60000
+//   );
+//   const job = schedule.scheduleJob(fifteenMinutesBefore, callback);
+// }
 function chrone(date, minutesBeforeDate, callback) {
   const targetDateTime = new Date(date);
-  const fifteenMinutesBefore = new Date(
-    targetDateTime.getTime() - minutesBeforeDate * 60000
-  );
-  const job = schedule.scheduleJob(fifteenMinutesBefore, callback);
-}
 
+  const notificationTime = new Date(
+    targetDateTime.getTime() - (minutesBeforeDate + 60) * 60000
+  );
+
+  const job = schedule.scheduleJob(notificationTime, callback);
+}
 var SendNotification = async (client, title, body, channelId) => {
   const tokens = await firebaseConfig.GetTokens(client);
 
