@@ -49,9 +49,9 @@ module.exports = {
         }
         return timeRanges;
       });
-      // Flatten the array of arrays
       const flattenedTimeRanges = timeRanges.flat();
-      res.status(200).json(flattenedTimeRanges);
+      const uniqueTimeRanges = [...new Set(flattenedTimeRanges)];
+      res.status(200).json(uniqueTimeRanges);
     } catch (error) {
       console.error("Error fetching stores:", error);
       res.status(500).json({ error: "Internal server error" });

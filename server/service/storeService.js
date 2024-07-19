@@ -22,7 +22,6 @@ class StoreService {
     let openTime = new Date(`1970-01-01T${timeOpen}:00Z`);
     let closeTime = new Date(`1970-01-01T${timeClose}:00Z`);
 
-    // Adjust the closeTime if it is earlier than the openTime
     if (closeTime <= openTime) {
       closeTime.setUTCDate(closeTime.getUTCDate() + 1);
     }
