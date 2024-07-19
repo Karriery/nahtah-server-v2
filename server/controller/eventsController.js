@@ -167,17 +167,26 @@ module.exports = {
   async getEventByStatus(req, res, next) {
     try {
       const events = await EventService.getByStatus(req.body.status);
+      let { page, limit } = req.query;
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 7;
 
-      // Get the current date
-      const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-
-      // Filter out events that have already occurred
+      const currentDate = new Date().toISOString().split("T")[0];
       const upcomingEvents = events.filter(
         (event) => event.start.split(" ")[0] >= currentDate
       );
-      // Send the filtered list of upcoming events
+
+      const skip = (page - 1) * limit;
+      const paginatedEvents = upcomingEvents.slice(skip, skip + limit);
+      const totalEvents = upcomingEvents.length;
+      const totalPages = Math.ceil(totalEvents / limit);
+
       if (upcomingEvents) {
-        res.send(upcomingEvents);
+        res.send({
+          upcomingEvents: paginatedEvents,
+          totalPages,
+          currentPage: page,
+        });
       } else {
         res.status(404).json({ message: "No upcoming events found" });
       }
@@ -325,36 +334,39 @@ module.exports = {
       const { status, client } = req.body;
       const { _id } = req.params;
       var Event = await EventService.updateStatus(_id, status);
-      chrone(Event.start, 15, async () => {
-        await SendNotification(
-          client,
-          "تذكير",
-          `لديك موعد حلاقة على الساعة ${new Date(
-            Event.start
-          ).getHours()}:${new Date(Event.start).getMinutes()}`,
-          "الحدث سيبدأ قريبًا",
-          "default"
-        );
-      });
 
-      chrone(Event.start, 60, async () => {
-        await SendNotification(
-          client,
-          "تذكير",
-          `لديك موعد حلاقة على الساعة ${new Date(
-            Event.start
-          ).getHours()}:${new Date(Event.start).getMinutes()}`,
-          "default"
-        );
-      });
-      chrone(Event.start, -30, async () => {
-        await SendNotification(
-          client,
-          " تقييم الخدمة",
-          " ماهو تقييمك للخدمة و الحلاق",
-          "default"
-        );
-      });
+      if (status === true) {
+        chrone(Event.start, 15, async () => {
+          await SendNotification(
+            client,
+            "تذكير",
+            `لديك موعد حلاقة على الساعة ${new Date(
+              Event.start
+            ).getHours()}:${new Date(Event.start).getMinutes()}`,
+            "الحدث سيبدأ قريبًا",
+            "default"
+          );
+        });
+
+        chrone(Event.start, 60, async () => {
+          await SendNotification(
+            client,
+            "تذكير",
+            `لديك موعد حلاقة على الساعة ${new Date(
+              Event.start
+            ).getHours()}:${new Date(Event.start).getMinutes()}`,
+            "default"
+          );
+        });
+        chrone(Event.start, -30, async () => {
+          await SendNotification(
+            client,
+            " تقييم الخدمة",
+            " ماهو تقييمك للخدمة و الحلاق",
+            "default"
+          );
+        });
+      }
       res.send({ msg: "updated" });
     } catch (next) {
       res.status(401).json(next);
