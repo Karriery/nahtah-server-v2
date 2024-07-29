@@ -8,8 +8,14 @@ module.exports = new (class EventService {
   get() {
     return Event.find().sort({ start: "desc" }).populate("client");
   }
+  find(status) {
+    return Event.find({ status: status }).populate("client");
+  }
   getById(_id) {
     return Event.findOne({ _id });
+  }
+  countDocuments(status) {
+    return Event.countDocuments({ status: status });
   }
   async getByStatus(status) {
     try {

@@ -164,32 +164,25 @@ module.exports = {
       res.status(401).json(next);
     }
   },
+
   async getEventByStatus(req, res, next) {
     try {
-      const events = await EventService.getByStatus(req.body.status);
       let { page, limit } = req.query;
       page = parseInt(page) || 1;
       limit = parseInt(limit) || 7;
 
-      const currentDate = new Date().toISOString().split("T")[0];
-      const upcomingEvents = events.filter(
-        (event) => event.start.split(" ")[0] >= currentDate
-      );
+      const totalCounts = await EventService.countDocuments(req.body.status);
+      const totalPages = Math.ceil(totalCounts / limit);
+      const events = await EventService.find(req.body.status)
+        .sort({ start: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit);
 
-      const skip = (page - 1) * limit;
-      const paginatedEvents = upcomingEvents.slice(skip, skip + limit);
-      const totalEvents = upcomingEvents.length;
-      const totalPages = Math.ceil(totalEvents / limit);
-
-      if (upcomingEvents) {
-        res.send({
-          upcomingEvents: paginatedEvents,
-          totalPages,
-          currentPage: page,
-        });
-      } else {
-        res.status(404).json({ message: "No upcoming events found" });
-      }
+      res.send({
+        upcomingEvents: events,
+        totalPages,
+        currentPage: page,
+      });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
