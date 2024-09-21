@@ -326,7 +326,7 @@ module.exports = {
     try {
       const { status, client } = req.body;
       const { _id } = req.params;
-      var Event = await EventService.updateStatus(_id, status);
+      const Event = await EventService.updateStatus(_id, status);
 
       if (status === true) {
         chrone(Event.start, 15, async () => {
@@ -354,15 +354,15 @@ module.exports = {
         chrone(Event.start, -30, async () => {
           await SendNotification(
             client,
-            " تقييم الخدمة",
-            " ماهو تقييمك للخدمة و الحلاق",
+            "تقييم الخدمة",
+            "ماهو تقييمك للخدمة و الحلاق",
             "default"
           );
         });
       }
       res.send({ msg: "updated" });
-    } catch (next) {
-      res.status(401).json(next);
+    } catch (error) {
+      res.status(401).json({ error: error.message });
     }
   },
 };
@@ -378,11 +378,12 @@ function chrone(date, minutesBeforeDate, callback) {
   const targetDateTime = new Date(date);
 
   const notificationTime = new Date(
-    targetDateTime.getTime() - (minutesBeforeDate + 60) * 60000
+    targetDateTime.getTime() - minutesBeforeDate * 60000
   );
 
   const job = schedule.scheduleJob(notificationTime, callback);
 }
+
 var SendNotification = async (client, title, body, channelId) => {
   const tokens = await firebaseConfig.GetTokens(client);
 
