@@ -119,7 +119,29 @@ module.exports = new (class EventService {
   //     return { message: `Error retrieving events: ${error.message}` };
   //   }
   // }
-  async getEventsTodayAndTomorrow() {
+
+async getEventsTodayAndTomorrow() {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const todayStart = new Date(today.setHours(0, 0, 0, 0));
+  const tomorrowEnd = new Date(tomorrow.setHours(23, 59, 59, 999));
+
+  try {
+    const events = await Event.find({
+      status: true,
+      start: { $gte: todayStart, $lte: tomorrowEnd },
+    }).populate("client", "name email");
+
+    if (!events.length) return { message: "No events found" };
+
+    return events; // Events already filtered by DB, no JS filtering needed
+  } catch (error) {
+    return { message: `Error retrieving events: ${error.message}` };
+  }
+}
+  async getEventsTodayAndTomorrowsss() {
     const stores = await StoreService.getAll();
     const timeRanges = stores.map((store) => {
       const timeOpen = new Date(store.timeOpen);
