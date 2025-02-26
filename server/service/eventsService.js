@@ -121,22 +121,52 @@ module.exports = new (class EventService {
   // }
 
 async getEventsTodayAndTomorrow() {
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
-
-  const todayStart = new Date(today.setHours(0, 0, 0, 0));
-  const tomorrowEnd = new Date(tomorrow.setHours(23, 59, 59, 999));
-
   try {
+    const stores = await StoreService.getAll();
+
+    // Generate time ranges for all stores
+    const flattenedTimeRanges = stores.flatMap((store) => {
+      const timeRanges = [];
+      const timeOpen = new Date(store.timeOpen);
+      const timeClose = new Date(store.timeClose);
+
+      for (let currentTime = new Date(timeOpen); currentTime < timeClose; currentTime.setUTCMinutes(currentTime.getUTCMinutes() + 30)) {
+        timeRanges.push(currentTime.toISOString().slice(11, 16)); // "HH:MM"
+      }
+      return timeRanges;
+    });
+
+    const midnightIndex = flattenedTimeRanges.findIndex((time) => time === "00:00");
+    const beforeMidnight = midnightIndex > 0 ? flattenedTimeRanges.slice(0, midnightIndex) : flattenedTimeRanges;
+    const afterMidnight = midnightIndex >= 0 ? flattenedTimeRanges.slice(midnightIndex) : [];
+
+    const firstBeforeMidnight = beforeMidnight[0];
+    const lastBeforeMidnight = beforeMidnight[beforeMidnight.length - 1];
+    const lastAfterMidnight = afterMidnight[afterMidnight.length - 1] || null;
+
+    const today = new Date();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+    const todayEnd = new Date(today.setHours(23, 59, 59, 999));
+
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    const tomorrowStart = new Date(tomorrow.setHours(0, 0, 0, 0));
+    const tomorrowEnd = lastAfterMidnight ? new Date(tomorrow.setHours(parseInt(lastAfterMidnight.split(":")[0]), parseInt(lastAfterMidnight.split(":")[1]), 59, 999)) : tomorrow;
+
+    // Filter events directly in the query
     const events = await Event.find({
       status: true,
-      start: { $gte: todayStart, $lte: tomorrowEnd },
-    }).populate("client", "name email");
+      $or: [
+        { start: { $gte: todayStart, $lte: todayEnd } },
+        { start: { $gte: tomorrowStart, $lte: tomorrowEnd } },
+      ],
+    }).populate("client");
 
-    if (!events.length) return { message: "No events found" };
+    if (!events.length) {
+      return { message: "No events found" };
+    }
 
-    return events; // Events already filtered by DB, no JS filtering needed
+    return events;
   } catch (error) {
     return { message: `Error retrieving events: ${error.message}` };
   }
