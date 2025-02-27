@@ -120,7 +120,6 @@ module.exports = new (class EventService {
   //   }
   // }
 
-
   async getEventsTodayAndTomorrow() {
     const stores = await StoreService.getAll();
     const timeRanges = stores.map((store) => {
@@ -163,34 +162,33 @@ module.exports = new (class EventService {
         ? todayString
         : tomorrow.toISOString().split("T")[0];
     try {
-      const TheEvents = await Event.find({ status: true }).populate("client");
-      if (TheEvents && TheEvents.length > 0) {
-        const eventSOfToday = TheEvents.filter((event) => {
-          const eventDate = event.start.split(" ")[0];
+      const TheEvents = await Event.find({
+        status: true,
+        $or: [
+          { start: { $regex: `^${todayString}` } },
+          { start: { $regex: `^${tomorrowString}` } },
+        ],
+      }).populate("client");
 
-          return eventDate === todayString;
-        });
-        const eventstillLastBeforeMidnight = eventSOfToday.filter((event) => {
-          const eventDate = event.start.split(" ")[1];
+      if (TheEvents.length > 0) {
+        const eventstillLastBeforeMidnight = TheEvents.filter((event) => {
+          const [eventDate, eventTime] = event.start.split(" ");
           return (
-            eventDate >= firstBeforeMidnight &&
-            eventDate <= beforeMidnight[beforeMidnight.length - 1]
+            eventDate === todayString &&
+            eventTime >= firstBeforeMidnight &&
+            eventTime <= beforeMidnight[beforeMidnight.length - 1]
           );
         });
-        const eventSOfTomorrow = TheEvents.filter((event) => {
-          const eventDate = event.start.split(" ")[0];
-          return eventDate === tomorrowString;
-        });
-        const eventstillLastAfterMidnight = eventSOfTomorrow.filter((event) => {
-          const eventDate = event.start.split(" ")[1];
-          return eventDate <= lastAfterMidnight;
+
+        const eventstillLastAfterMidnight = TheEvents.filter((event) => {
+          const [eventDate, eventTime] = event.start.split(" ");
+          return eventDate === tomorrowString && eventTime <= lastAfterMidnight;
         });
 
-        const filterTheEvents = [
+        return [
           ...eventstillLastBeforeMidnight,
           ...eventstillLastAfterMidnight,
         ];
-        return filterTheEvents;
       } else {
         return { message: "No events found" };
       }
